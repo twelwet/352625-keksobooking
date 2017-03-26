@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
 
 * Студент: [Максим Акимов](https://up.htmlacademy.ru/javascript/9/user/352625).
-* Наставник: `Неизвестно`.
+* Наставник: [Юрий Нехаевский](https://htmlacademy.ru/profile/nekhaevskiy).
 
 ---
 
