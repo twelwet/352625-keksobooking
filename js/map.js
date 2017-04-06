@@ -48,27 +48,45 @@ var getRandomValue = function (min, max) {
 };
 
 // Объявляем функцию получения случайного значения из массива
+// [ВОПРОС] Не понял почему '- 1' лишнее?
+// Если убрать единицу:
+// 'return array[(Math.random() * (array.length).toFixed(0)]',
+// то возможен возврат несуществующего элемента массива 'undefined'.
+// Добавление '- 1' исключает такой сценарий.
 var getRandomArrayValue = function (array) {
   return array[(Math.random() * (array.length - 1)).toFixed(0)];
 };
 
 // Объявляем функцию получения пути к аватару автора объявления
 var getAuthorAvatar = function (numeral) {
-  return 'img/avatars/user0' + numeral + '.png';
+  if (numeral < 10) {
+    return 'img/avatars/user0' + numeral + '.png';
+  } else {
+    return 'img/avatars/user' + numeral + '.png';
+  }
 };
 
-// Объявляем функцию получения строки заголовка объявления
-var getOfferTitle = function (arrayValue) {
-  return TITLES[arrayValue];
+// Объявляем функцию получения случайной строки заголовка объявления
+var getOfferTitle = function () {
+  return getRandomArrayValue(TITLES);
 };
 
-// Объявляем переменные получения рандомных координат X, Y
-var randomX = getRandomValue(MIN_X, MAX_X);
-var randomY = getRandomValue(MIN_Y, MAX_Y);
+// Объявляем функции получения рандомных координат X, Y
+var getRandomX = function () {
+  return getRandomValue(MIN_X, MAX_X);
+};
+var getRandomY = function () {
+  return getRandomValue(MIN_Y, MAX_Y);
+};
 
 // Объявляем функцию получения строки адреса объявления
+// В результате выполнения функции 'getOfferAddress'
+// случайные значения X и Y вычисляются заново. Так быть не должно.
+// [ВОПРОС] Подскажи как исправить функцию 'getOfferAddress', чтобы
+// она складывала в строку результаты функций 'getRandomX' и 'getRandomY',
+// а не вызывала эти функции повторно?
 var getOfferAddress = function () {
-  return (randomX + ', ' + randomY);
+  return (getRandomX() + ', ' + getRandomY());
 };
 
 // Объявляем функцию получения случайной цены в заданном диапазоне
@@ -77,8 +95,10 @@ var getOfferPrice = function () {
 };
 
 // Объвляем функцию получения случайного значения из константы 'TYPES'
+// [ВОПРОС] Из этой функции я возвращаю случайное значения типа недвижимости
+// 'flat', 'house' или 'bungalo'. Эту функцию как-то сократить?
 var getOfferType = function () {
-  getRandomArrayValue(TYPES);
+  return getRandomArrayValue(TYPES);
 };
 
 // Объявляем функцию получения случайного количества комнат в заданном диапазоне
@@ -101,26 +121,38 @@ var getCheckoutTime = function () {
   return getRandomArrayValue(CHECK_TIMES);
 };
 
-// Объявляем функцию формирования массива из константы 'FEATURES' рандомного размера
+// Объявляем функцию формирования массива из константы 'FEATURES'
+// рандомного размера с рандомным наполнением
 var getOfferFeatures = function () {
-  var randomSize = FEATURES.indexOf(getRandomArrayValue(FEATURES));
+  var temporaryArray = FEATURES;
+  var randomSize = getRandomValue(0, FEATURES.length);
   var randomFeatures = new Array(randomSize);
   for (var i = 0; i < randomSize; i++) {
-    randomFeatures[i] = FEATURES[i];
+    var x = getRandomValue(0, (FEATURES.length - 1));
+    randomFeatures[i] = temporaryArray[x];
+    temporaryArray.splice(x, 1);
   }
   return randomFeatures;
 };
 
-// Объявляем массив, состоящий из JS-объектов, которые
-// будут описывать похожие объявления неподалеку
-var ads = new Array(ADS_QUANTITY);
+// Объявляем ассоциативные массивы, которые содержат блоки данных объявления:
+// -автор
+var author = {};
+// -предложение
+var offer = {};
+// -локация
+var location = {};
 
-// Заполняем в цикле объявленный массив
-// [ВОПРОС] Массив заполняется не корректно, подскажи как исправить?
-for (var i = 0; i < ads.length; i++) {
+// Создаем массив объявлений
+var ads = [];
+
+// Заполняем массивы в цикле
+for (var i = 0; i < ADS_QUANTITY; i++) {
   var j = i + 1;
-  ads[i] = {
-    avatar: getAuthorAvatar(j),
+  author[i] = {
+    avatar: getAuthorAvatar(j)
+  };
+  offer[i] = {
     title: getOfferTitle(i),
     address: getOfferAddress(),
     price: getOfferPrice(),
@@ -131,8 +163,11 @@ for (var i = 0; i < ads.length; i++) {
     checkout: getCheckoutTime(),
     features: getOfferFeatures(),
     description: '',
-    photos: [],
-    x: randomX,
-    y: randomY
+    photos: []
   };
+  location[i] = {
+    x: getRandomX,
+    y: getRandomY
+  };
+  ads[i] = [author[i], offer[i], location[i]];
 }
