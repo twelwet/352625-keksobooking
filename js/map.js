@@ -48,13 +48,8 @@ var getRandomValue = function (min, max) {
 };
 
 // Объявляем функцию получения случайного значения из массива
-// [ВОПРОС] Не понял почему '- 1' лишнее?
-// Если убрать единицу:
-// 'return array[(Math.random() * (array.length).toFixed(0)]',
-// то возможен возврат несуществующего элемента массива 'undefined'.
-// Добавление '- 1' исключает такой сценарий.
 var getRandomArrayValue = function (array) {
-  return array[(Math.random() * (array.length - 1)).toFixed(0)];
+  return array[Math.floor(Math.random() * array.length)];
 };
 
 // Объявляем функцию получения пути к аватару автора объявления
@@ -71,22 +66,15 @@ var getOfferTitle = function () {
   return getRandomArrayValue(TITLES);
 };
 
-// Объявляем функции получения рандомных координат X, Y
-var getRandomX = function () {
-  return getRandomValue(MIN_X, MAX_X);
-};
-var getRandomY = function () {
-  return getRandomValue(MIN_Y, MAX_Y);
-};
+// Объявляем переменные получения рандомных координат X, Y
+var randomX;
+var randomY;
 
 // Объявляем функцию получения строки адреса объявления
-// В результате выполнения функции 'getOfferAddress'
-// случайные значения X и Y вычисляются заново. Так быть не должно.
-// [ВОПРОС] Подскажи как исправить функцию 'getOfferAddress', чтобы
-// она складывала в строку результаты функций 'getRandomX' и 'getRandomY',
-// а не вызывала эти функции повторно?
 var getOfferAddress = function () {
-  return (getRandomX() + ', ' + getRandomY());
+  randomX = getRandomValue(MIN_X, MAX_X);
+  randomY = getRandomValue(MIN_Y, MAX_Y);
+  return (randomX + ', ' + randomY);
 };
 
 // Объявляем функцию получения случайной цены в заданном диапазоне
@@ -95,8 +83,6 @@ var getOfferPrice = function () {
 };
 
 // Объвляем функцию получения случайного значения из константы 'TYPES'
-// [ВОПРОС] Из этой функции я возвращаю случайное значения типа недвижимости
-// 'flat', 'house' или 'bungalo'. Эту функцию как-то сократить?
 var getOfferType = function () {
   return getRandomArrayValue(TYPES);
 };
@@ -111,12 +97,12 @@ var getOfferGuests = function () {
   return getRandomValue(MIN_GUESTS_QUANTITY, MAX_GUESTS_QUANTITY);
 };
 
-// Объявляем функцию получения времени заезда в размещение
+// Объявляем функцию получения времени заезда
 var getCheckinTime = function () {
   return getRandomArrayValue(CHECK_TIMES);
 };
 
-// Объявляем функцию получения времени выезда из размещения
+// Объявляем функцию получения времени выезда
 var getCheckoutTime = function () {
   return getRandomArrayValue(CHECK_TIMES);
 };
@@ -124,50 +110,56 @@ var getCheckoutTime = function () {
 // Объявляем функцию формирования массива из константы 'FEATURES'
 // рандомного размера с рандомным наполнением
 var getOfferFeatures = function () {
-  var temporaryArray = FEATURES;
+  // Объявляем временный массив, рандомные элементы которого будут стираться в цикле
+  var temporaryArray = [
+    'wifi',
+    'dishwasher',
+    'parking',
+    'washer',
+    'elevator',
+    'conditioner'
+  ];
+  // Конечно строка 'var temporaryArray = FEATURES;' короче, но почему-то она
+  // не работает корректно: в цикле стираются не только элементы массива
+  // 'temporaryArray', но и элементы массива 'FEATURES' - что не допустимо.
+  // [ВОПРОС] - почему так происходит, ведь метод '.slice(x, 1)' применяется
+  // только к массиву 'temporaryArray'?
   var randomSize = getRandomValue(0, FEATURES.length);
-  var randomFeatures = new Array(randomSize);
-  for (var i = 0; i < randomSize; i++) {
-    var x = getRandomValue(0, (FEATURES.length - 1));
+  // Объявляем массив, в который будем записывать рандомные элементы из temporaryArray
+  var randomFeatures = [];
+  for (var i = 0; i < (randomSize); i++) {
+    var x = getRandomValue(0, (temporaryArray.length - 1));
     randomFeatures[i] = temporaryArray[x];
     temporaryArray.splice(x, 1);
   }
   return randomFeatures;
 };
 
-// Объявляем ассоциативные массивы, которые содержат блоки данных объявления:
-// -автор
-var author = {};
-// -предложение
-var offer = {};
-// -локация
-var location = {};
-
 // Создаем массив объявлений
-var ads = [];
+var ads = {};
 
-// Заполняем массивы в цикле
+// Заполняем массив в цикле
 for (var i = 0; i < ADS_QUANTITY; i++) {
-  var j = i + 1;
-  author[i] = {
-    avatar: getAuthorAvatar(j)
+  ads[i] = {
+    author: {
+      avatar: getAuthorAvatar(i + 1)
+    },
+    offer: {
+      title: getOfferTitle(),
+      address: getOfferAddress(),
+      price: getOfferPrice(),
+      type: getOfferType(),
+      rooms: getOfferRooms(),
+      guests: getOfferGuests(),
+      checkin: getCheckinTime(),
+      checkout: getCheckoutTime(),
+      features: getOfferFeatures(),
+      description: '',
+      photos: []
+    },
+    location: {
+      x: randomX,
+      y: randomY
+    }
   };
-  offer[i] = {
-    title: getOfferTitle(i),
-    address: getOfferAddress(),
-    price: getOfferPrice(),
-    type: getOfferType(),
-    rooms: getOfferRooms(),
-    guests: getOfferGuests(),
-    checkin: getCheckinTime(),
-    checkout: getCheckoutTime(),
-    features: getOfferFeatures(),
-    description: '',
-    photos: []
-  };
-  location[i] = {
-    x: getRandomX,
-    y: getRandomY
-  };
-  ads[i] = [author[i], offer[i], location[i]];
 }
