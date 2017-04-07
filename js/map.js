@@ -111,19 +111,7 @@ var getCheckoutTime = function () {
 // рандомного размера с рандомным наполнением
 var getOfferFeatures = function () {
   // Объявляем временный массив, рандомные элементы которого будут стираться в цикле
-  var temporaryArray = [
-    'wifi',
-    'dishwasher',
-    'parking',
-    'washer',
-    'elevator',
-    'conditioner'
-  ];
-  // Конечно строка 'var temporaryArray = FEATURES;' короче, но почему-то она
-  // не работает корректно: в цикле стираются не только элементы массива
-  // 'temporaryArray', но и элементы массива 'FEATURES' - что не допустимо.
-  // [ВОПРОС] - почему так происходит, ведь метод '.slice(x, 1)' применяется
-  // только к массиву 'temporaryArray'?
+  var temporaryArray = FEATURES.slice;
   var randomSize = getRandomValue(0, FEATURES.length);
   // Объявляем массив, в который будем записывать рандомные элементы из temporaryArray
   var randomFeatures = [];
@@ -136,7 +124,7 @@ var getOfferFeatures = function () {
 };
 
 // Создаем массив объявлений
-var ads = {};
+var ads = [];
 
 // Заполняем массив в цикле
 for (var i = 0; i < ADS_QUANTITY; i++) {
@@ -163,3 +151,25 @@ for (var i = 0; i < ADS_QUANTITY; i++) {
     }
   };
 }
+
+// Объявляем переменную, внутри которой будет находится DIV-контейнер будущих меток
+var pinMapElement = document.querySelector('.tokyo__pin-map');
+
+// Объявляем массив, внутри которого будет находится DIV c разметкой метки
+var pin = [];
+
+// Объявляем функцию, которая в цикле вставляет в DIV-контейнер все метки
+var insertAllPins = function () {
+  for (i = 0; i < ADS_QUANTITY; i++) {
+    pin[i] = document.createElement('div');
+    pin[i].className = 'pin';
+    pin[i].style.left = (ads[i].location.x) + 'px';
+    pin[i].style.top = (ads[i].location.y) + 'px';
+    pin[i].innerHTML = '<img src=\'' + ads[i].author.avatar + '\' class=\'rounded\' width=\'40\' height=\'40\'>';
+    var fragment = document.createDocumentFragment();
+    fragment.appendChild(pin[i]);
+    pinMapElement.appendChild(fragment);
+  }
+};
+
+insertAllPins();
