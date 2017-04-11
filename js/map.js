@@ -111,7 +111,7 @@ var getCheckoutTime = function () {
 // рандомного размера с рандомным наполнением
 var getOfferFeatures = function () {
   // Объявляем временный массив, рандомные элементы которого будут стираться в цикле
-  var temporaryArray = FEATURES.slice;
+  var temporaryArray = FEATURES.slice();
   var randomSize = getRandomValue(0, FEATURES.length);
   // Объявляем массив, в который будем записывать рандомные элементы из temporaryArray
   var randomFeatures = [];
@@ -160,16 +160,70 @@ var pin = [];
 
 // Объявляем функцию, которая в цикле вставляет в DIV-контейнер все метки
 var insertAllPins = function () {
+  // Объявляем переменную, внутри которой будет находится DOM-объект
+  var fragment = document.createDocumentFragment();
   for (i = 0; i < ADS_QUANTITY; i++) {
     pin[i] = document.createElement('div');
     pin[i].className = 'pin';
     pin[i].style.left = (ads[i].location.x) + 'px';
     pin[i].style.top = (ads[i].location.y) + 'px';
     pin[i].innerHTML = '<img src=\'' + ads[i].author.avatar + '\' class=\'rounded\' width=\'40\' height=\'40\'>';
-    var fragment = document.createDocumentFragment();
     fragment.appendChild(pin[i]);
     pinMapElement.appendChild(fragment);
   }
 };
 
 insertAllPins();
+
+// Объявляем переменную, внутри которой находится TEMPLATE объявления
+var lodgeTemplate = document.getElementById('lodge-template').content;
+
+// Объявляем переменную, в которую клонируем шаблон объявления
+var lodgeElement = lodgeTemplate.cloneNode(true);
+
+// Задаем функцию заполнения шаблона данными из 1-го элемента массива объявлений
+var fillLodgeElement = function () {
+  lodgeElement.querySelector('.lodge__title').textContent = ads[0].offer.title;
+  lodgeElement.querySelector('.lodge__address').textContent = ads[0].offer.address;
+  lodgeElement.querySelector('.lodge__price').textContent = ads[0].offer.price + 'Р/ночь';
+  if (ads[0].offer.type === 'flat') {
+    lodgeElement.querySelector('.lodge__type').textContent = 'Квартира';
+  }
+  if (ads[0].offer.type === 'bungalo') {
+    lodgeElement.querySelector('.lodge__type').textContent = 'Бунгало';
+  }
+  if (ads[0].offer.type === 'house') {
+    lodgeElement.querySelector('.lodge__type').textContent = 'Дом';
+  }
+  lodgeElement.querySelector('.lodge__rooms-and-guests').textContent = 'Для ' + ads[0].offer.guests + ' гостей в ' + ads[0].offer.rooms + ' комнатах';
+  lodgeElement.querySelector('.lodge__checkin-time').textContent = 'Заезд после ' + ads[0].offer.checkin + ', выезд до ' + ads[0].offer.checkout;
+  // Объявляем функцию создания тегов SPAN по количеству особенностей размещения
+  var createSpans = function () {
+    var featureSpan = [];
+    var fragment = document.createDocumentFragment();
+    for (i = 0; i < ads[0].offer.features.length; i++) {
+      featureSpan[i] = document.createElement('span');
+      featureSpan[i].className = 'feature__image feature__image--' + ads[0].offer.features[i];
+      fragment.appendChild(featureSpan[i]);
+    }
+    lodgeElement.querySelector('.lodge__features').appendChild(fragment);
+  };
+  createSpans();
+  lodgeElement.querySelector('.lodge__description').textContent = ads[0].offer.description;
+  return lodgeElement;
+};
+
+fillLodgeElement();
+
+// Задаем функцию вставки новых данных на страницу
+var pasteNewData = function () {
+  // Заменяем путь к аватару объявления
+  var imgAvatar = document.querySelector('.dialog__title');
+  imgAvatar.innerHTML = '<img src=\'' + ads[1].author.avatar + '\' alt=\"Avatar\" width=\"70\" height=\"70\"><a href=\"#\" class=\"dialog__close\"><img src=\"img/close.svg\" alt=\"close\" width=\"22\" height=\"22\"></a>';
+  // Удаляем div .dialog__panel
+  document.querySelector('.dialog').removeChild(document.querySelector('.dialog__panel'));
+  // Всавляем на его место шаблон объявления
+  document.querySelector('.dialog').appendChild(lodgeElement);
+};
+
+pasteNewData();
