@@ -182,21 +182,21 @@ var lodgeTemplate = document.getElementById('lodge-template').content;
 var lodgeElement = lodgeTemplate.cloneNode(true);
 
 // Объявляем функцию создания тегов SPAN по количеству особенностей размещения
-var createSpans = function () {
+var createSpans = function (x) {
   var featureSpan = [];
-  for (i = 0; i < ads[0].offer.features.length; i++) {
+  for (i = 0; i < ads[x].offer.features.length; i++) {
     featureSpan[i] = document.createElement('span');
-    featureSpan[i].className = 'feature__image feature__image--' + ads[0].offer.features[i];
+    featureSpan[i].className = 'feature__image feature__image--' + ads[x].offer.features[i];
     lodgeElement.querySelector('.lodge__features').appendChild(featureSpan[i]);
   }
 };
 
 // Задаем функцию заполнения шаблона данными из 1-го элемента массива объявлений
-var fillLodgeElement = function () {
-  lodgeElement.querySelector('.lodge__title').textContent = ads[0].offer.title;
-  lodgeElement.querySelector('.lodge__address').textContent = ads[0].offer.address;
-  lodgeElement.querySelector('.lodge__price').textContent = ads[0].offer.price + 'Р/ночь';
-  switch (ads[0].offer.type) {
+var fillLodgeElement = function (x) {
+  lodgeElement.querySelector('.lodge__title').textContent = ads[x].offer.title;
+  lodgeElement.querySelector('.lodge__address').textContent = ads[x].offer.address;
+  lodgeElement.querySelector('.lodge__price').textContent = ads[x].offer.price + 'Р/ночь';
+  switch (ads[x].offer.type) {
     case 'flat':
       lodgeElement.querySelector('.lodge__type').textContent = 'Квартира';
       break;
@@ -207,18 +207,39 @@ var fillLodgeElement = function () {
       lodgeElement.querySelector('.lodge__type').textContent = 'Дом';
       break;
   }
-  lodgeElement.querySelector('.lodge__rooms-and-guests').textContent = 'Для ' + ads[0].offer.guests + ' гостей в ' + ads[0].offer.rooms + ' комнатах';
-  lodgeElement.querySelector('.lodge__checkin-time').textContent = 'Заезд после ' + ads[0].offer.checkin + ', выезд до ' + ads[0].offer.checkout;
-  createSpans();
-  lodgeElement.querySelector('.lodge__description').textContent = ads[0].offer.description;
+  lodgeElement.querySelector('.lodge__rooms-and-guests').textContent = 'Для ' + ads[x].offer.guests + ' гостей в ' + ads[x].offer.rooms + ' комнатах';
+  lodgeElement.querySelector('.lodge__checkin-time').textContent = 'Заезд после ' + ads[x].offer.checkin + ', выезд до ' + ads[x].offer.checkout;
+  createSpans(x);
+  lodgeElement.querySelector('.lodge__description').textContent = ads[x].offer.description;
 };
 
-fillLodgeElement();
+fillLodgeElement(0);
 
 // Задаем функцию вставки новых данных на страницу
-var pasteNewData = function () {
-  document.querySelector('.dialog__title img').src = ads[0].author.avatar;
+var pasteNewData = function (x) {
+  document.querySelector('.dialog__title img').src = ads[x].author.avatar;
   document.querySelector('.dialog').replaceChild(lodgeElement, document.querySelector('.dialog__panel'));
 };
 
-pasteNewData();
+pasteNewData(0);
+
+// Задаем алгоритм нажатия 'click' на любой из восьми 'pin[0...7]', который:
+// 1) удаляет у всех 'pin[0...7]' класс '.pin--main';
+// 2) добавляет к текущему 'pin[x]' класс '.pin--main';
+// 3) возвращает результат функции заполнения шаблона fillLodgeElement(j);
+// 4) возвращает результат функции вставки данных fillLodgeElement(j);
+// [ВОПРОС] Подскажи почему не работают пункты 3) и 4)?
+var onPinClick = function (x) {
+  pin[x].addEventListener('click', function () {
+    for (i = 0; i < pin.length; i++) {
+      pin[i].classList.remove('pin--active');
+    }
+    pin[x].classList.add('pin--active');
+    fillLodgeElement(x);
+    pasteNewData(x);
+  });
+};
+
+for (i = 0; i < pin.length; i++) {
+  onPinClick(i);
+}
