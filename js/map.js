@@ -213,7 +213,7 @@ var fillLodgeElement = function (x) {
   lodgeElement.querySelector('.lodge__description').textContent = ads[x].offer.description;
 };
 
-fillLodgeElement(0);
+// fillLodgeElement(0);
 
 // Задаем функцию вставки новых данных на страницу
 var pasteNewData = function (x) {
@@ -221,7 +221,7 @@ var pasteNewData = function (x) {
   document.querySelector('.dialog').replaceChild(lodgeElement, document.querySelector('.dialog__panel'));
 };
 
-pasteNewData(0);
+// pasteNewData(0);
 
 // Задаем алгоритм нажатия 'click' на любой из восьми 'pin[0...7]', который:
 // 1) удаляет у всех 'pin[0...7]' класс '.pin--main';
