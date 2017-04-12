@@ -161,14 +161,16 @@ var pin = [];
 // Объявляем функцию, которая в цикле вставляет в DIV-контейнер все метки
 var insertAllPins = function () {
   // Объявляем переменную, внутри которой будет находится DOM-объект
+  var fragment = document.createDocumentFragment();
   for (i = 0; i < ADS_QUANTITY; i++) {
     pin[i] = document.createElement('div');
     pin[i].className = 'pin';
     pin[i].style.left = (ads[i].location.x) + 'px';
     pin[i].style.top = (ads[i].location.y) + 'px';
     pin[i].innerHTML = '<img src=\'' + ads[i].author.avatar + '\' class=\'rounded\' width=\'40\' height=\'40\'>';
-    pinMapElement.appendChild(pin[i]);
+    fragment.appendChild(pin[i]);
   }
+  pinMapElement.appendChild(fragment);
 };
 
 insertAllPins();
@@ -209,15 +211,14 @@ var fillLodgeElement = function () {
   lodgeElement.querySelector('.lodge__checkin-time').textContent = 'Заезд после ' + ads[0].offer.checkin + ', выезд до ' + ads[0].offer.checkout;
   createSpans();
   lodgeElement.querySelector('.lodge__description').textContent = ads[0].offer.description;
-  return lodgeElement;
 };
 
 fillLodgeElement();
 
 // Задаем функцию вставки новых данных на страницу
 var pasteNewData = function () {
-  document.querySelector('.dialog__title img').src = ads[1].author.avatar;
-  document.querySelector('.dialog').replaceChild(lodgeElement.querySelector('.dialog__panel'), document.querySelector('.dialog__panel'));
+  document.querySelector('.dialog__title img').src = ads[0].author.avatar;
+  document.querySelector('.dialog').replaceChild(lodgeElement, document.querySelector('.dialog__panel'));
 };
 
 pasteNewData();
