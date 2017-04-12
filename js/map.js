@@ -213,23 +213,20 @@ var fillLodgeElement = function (x) {
   lodgeElement.querySelector('.lodge__description').textContent = ads[x].offer.description;
 };
 
-// fillLodgeElement(0);
-
 // Задаем функцию вставки новых данных на страницу
 var pasteNewData = function (x) {
   document.querySelector('.dialog__title img').src = ads[x].author.avatar;
   document.querySelector('.dialog').replaceChild(lodgeElement, document.querySelector('.dialog__panel'));
+  lodgeElement = lodgeTemplate.cloneNode(true);
 };
 
-// pasteNewData(0);
-
 // Задаем алгоритм нажатия 'click' на любой из восьми 'pin[0...7]', который:
-// 1) удаляет у всех 'pin[0...7]' класс '.pin--main';
-// 2) добавляет к текущему 'pin[x]' класс '.pin--main';
+// 1) удаляет у всех 'pin[0...7]' класс '.pin--active';
+// 2) добавляет к текущему 'pin[x]' класс '.pin--active';
 // 3) возвращает результат функции заполнения шаблона fillLodgeElement(j);
 // 4) возвращает результат функции вставки данных fillLodgeElement(j);
-// [ВОПРОС] Подскажи почему не работают пункты 3) и 4)?
-var onPinClick = function (x) {
+
+var openDialogPanel = function (x) {
   pin[x].addEventListener('click', function () {
     for (i = 0; i < pin.length; i++) {
       pin[i].classList.remove('pin--active');
@@ -237,9 +234,21 @@ var onPinClick = function (x) {
     pin[x].classList.add('pin--active');
     fillLodgeElement(x);
     pasteNewData(x);
+    document.querySelector('.dialog').style.display = 'block';
   });
 };
 
+
 for (i = 0; i < pin.length; i++) {
-  onPinClick(i);
+  openDialogPanel(i);
 }
+
+var dialogCloseButton = document.querySelector('.dialog__close');
+
+var closeDialogPanel = function (x) {
+  dialogCloseButton.addEventListener('click', function () {
+    document.querySelector('.dialog').style.display = 'none';
+  });
+};
+
+closeDialogPanel();
