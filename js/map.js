@@ -168,6 +168,7 @@ var insertAllPins = function () {
     pin[i].style.left = (ads[i].location.x) + 'px';
     pin[i].style.top = (ads[i].location.y) + 'px';
     pin[i].innerHTML = '<img src=\'' + ads[i].author.avatar + '\' class=\'rounded\' width=\'40\' height=\'40\'>';
+    pin[i].tabIndex = 0;
     fragment.appendChild(pin[i]);
   }
   pinMapElement.appendChild(fragment);
@@ -181,74 +182,105 @@ var lodgeTemplate = document.getElementById('lodge-template').content;
 // Объявляем переменную, в которую клонируем шаблон объявления
 var lodgeElement = lodgeTemplate.cloneNode(true);
 
+// Объявляем переменную-контейнер диалогового окна объявления
+var dialogContainer = document.querySelector('.dialog');
+
+// Объявляем переменную, в которой будет находится путь к аватару на объявлении
+var dialogContainerTitleImg = dialogContainer.querySelector('.dialog__title img');
+// var dialogContainerPanel = dialogContainer.querySelector('.dialog__panel');
+
 // Объявляем функцию создания тегов SPAN по количеству особенностей размещения
 var createSpans = function (x) {
   var featureSpan = [];
+  var lodgeElementFeatures = lodgeElement.querySelector('.lodge__features');
   for (i = 0; i < ads[x].offer.features.length; i++) {
     featureSpan[i] = document.createElement('span');
     featureSpan[i].className = 'feature__image feature__image--' + ads[x].offer.features[i];
-    lodgeElement.querySelector('.lodge__features').appendChild(featureSpan[i]);
+    lodgeElementFeatures.appendChild(featureSpan[i]);
   }
 };
 
 // Задаем функцию заполнения шаблона данными из 1-го элемента массива объявлений
 var fillLodgeElement = function (x) {
-  lodgeElement.querySelector('.lodge__title').textContent = ads[x].offer.title;
-  lodgeElement.querySelector('.lodge__address').textContent = ads[x].offer.address;
-  lodgeElement.querySelector('.lodge__price').textContent = ads[x].offer.price + 'Р/ночь';
+  // Объявляем переменные-составляющие блока 'lodgeElement': title, address, price и т.д.
+  var lodgeElementTitle = lodgeElement.querySelector('.lodge__title');
+  var lodgeElementAddress = lodgeElement.querySelector('.lodge__address');
+  var lodgeElementPrice = lodgeElement.querySelector('.lodge__price');
+  var lodgeElementType = lodgeElement.querySelector('.lodge__type');
+  var lodgeElementsRoomsAndGuests = lodgeElement.querySelector('.lodge__rooms-and-guests');
+  var lodgeElementCheckinTime = lodgeElement.querySelector('.lodge__checkin-time');
+  var lodgeElementDescription = lodgeElement.querySelector('.lodge__description');
+  lodgeElementTitle.textContent = ads[x].offer.title;
+  lodgeElementAddress.textContent = ads[x].offer.address;
+  lodgeElementPrice.textContent = ads[x].offer.price + 'Р/ночь';
   switch (ads[x].offer.type) {
     case 'flat':
-      lodgeElement.querySelector('.lodge__type').textContent = 'Квартира';
+      lodgeElementType.textContent = 'Квартира';
       break;
     case 'bungalo':
-      lodgeElement.querySelector('.lodge__type').textContent = 'Бунгало';
+      lodgeElementType.textContent = 'Бунгало';
       break;
     case 'house':
-      lodgeElement.querySelector('.lodge__type').textContent = 'Дом';
+      lodgeElementType.textContent = 'Дом';
       break;
   }
-  lodgeElement.querySelector('.lodge__rooms-and-guests').textContent = 'Для ' + ads[x].offer.guests + ' гостей в ' + ads[x].offer.rooms + ' комнатах';
-  lodgeElement.querySelector('.lodge__checkin-time').textContent = 'Заезд после ' + ads[x].offer.checkin + ', выезд до ' + ads[x].offer.checkout;
+  lodgeElementsRoomsAndGuests.textContent = 'Для ' + ads[x].offer.guests + ' гостей в ' + ads[x].offer.rooms + ' комнатах';
+  lodgeElementCheckinTime.textContent = 'Заезд после ' + ads[x].offer.checkin + ', выезд до ' + ads[x].offer.checkout;
   createSpans(x);
-  lodgeElement.querySelector('.lodge__description').textContent = ads[x].offer.description;
+  lodgeElementDescription.textContent = ads[x].offer.description;
 };
 
 // Задаем функцию вставки новых данных на страницу
 var pasteNewData = function (x) {
-  document.querySelector('.dialog__title img').src = ads[x].author.avatar;
-  document.querySelector('.dialog').replaceChild(lodgeElement, document.querySelector('.dialog__panel'));
-  lodgeElement = lodgeTemplate.cloneNode(true);
+  dialogContainerTitleImg.src = ads[x].author.avatar;
+  dialogContainer.replaceChild(lodgeElement, dialogContainer.querySelector('.dialog__panel'));
 };
 
-// Задаем алгоритм нажатия 'click' на любой из восьми 'pin[0...7]', который:
-// 1) удаляет у всех 'pin[0...7]' класс '.pin--active';
-// 2) добавляет к текущему 'pin[x]' класс '.pin--active';
-// 3) возвращает результат функции заполнения шаблона fillLodgeElement(j);
-// 4) возвращает результат функции вставки данных fillLodgeElement(j);
+// Задаем функцию, которая по клику подсвечивает пин
+var updateActivePin = function (x) {
+  for (i = 0; i < pin.length; i++) {
+    pin[i].classList.remove('pin--active');
+  }
+  pin[x].classList.add('pin--active');
+};
 
+// Задаем функцию открытия диалогового окна объявления
 var openDialogPanel = function (x) {
-  pin[x].addEventListener('click', function () {
-    for (i = 0; i < pin.length; i++) {
-      pin[i].classList.remove('pin--active');
-    }
-    pin[x].classList.add('pin--active');
-    fillLodgeElement(x);
-    pasteNewData(x);
-    document.querySelector('.dialog').style.display = 'block';
+  fillLodgeElement(x);
+  pasteNewData(x);
+  lodgeElement = lodgeTemplate.cloneNode(true);
+  dialogContainer.style.display = 'block';
+};
+
+// Описываем алгоритм 'click' по пину
+var onPinClick = function (elem, x) {
+  elem.addEventListener('click', function () {
+    updateActivePin(x);
+    openDialogPanel(x);
   });
 };
 
+// Описываем алгоритм 'keydown' ENTER по сфокусированному пину
+var onPinEnterKeyDown = function (elem, x) {
+  elem.addEventListener('keydown', function (evt) {
+    if (evt.keyCode === 13) {
+      updateActivePin(x);
+      openDialogPanel(x);
+    }
+  });
+};
 
+// Выполняем функции клика и нажатия на ENTER для всех pin[0...7]
 for (i = 0; i < pin.length; i++) {
-  openDialogPanel(i);
+  onPinClick(pin[i], i);
+  onPinEnterKeyDown(pin[i], i);
 }
 
+// Задаем механизм закрытия диалогового окна при клике на крестик
 var dialogCloseButton = document.querySelector('.dialog__close');
-
-var closeDialogPanel = function (x) {
-  dialogCloseButton.addEventListener('click', function () {
-    document.querySelector('.dialog').style.display = 'none';
-  });
-};
-
-closeDialogPanel();
+dialogCloseButton.addEventListener('click', function () {
+  dialogContainer.style.display = 'none';
+  for (i = 0; i < pin.length; i++) {
+    pin[i].classList.remove('pin--active');
+  }
+});
