@@ -180,7 +180,7 @@ insertAllPins();
 var lodgeTemplate = document.getElementById('lodge-template').content;
 
 // Объявляем переменную, в которую клонируем шаблон объявления
-var lodgeElement = lodgeTemplate.cloneNode(true);
+var lodgeElement;
 
 // Объявляем переменную-контейнер диалогового окна объявления
 var dialogContainer = document.querySelector('.dialog');
@@ -236,24 +236,31 @@ var pasteNewData = function (x) {
   dialogContainer.replaceChild(lodgeElement, dialogContainer.querySelector('.dialog__panel'));
 };
 
-// Задаем функцию, которая по клику подсвечивает пин
-var updateActivePin = function (x) {
+// Задаем фнукцию деактивации всех активных пинов
+var deactivateAllPins = function () {
   for (i = 0; i < pin.length; i++) {
     pin[i].classList.remove('pin--active');
   }
+};
+
+// Задаем функцию, которая по клику подсвечивает пин
+var updateActivePin = function (x) {
+  deactivateAllPins();
   pin[x].classList.add('pin--active');
 };
 
+// Задаем функцию, которая деактивирует подсвеченный
+
 // Задаем функцию открытия диалогового окна объявления
 var openDialogPanel = function (x) {
+  lodgeElement = lodgeTemplate.cloneNode(true);
   fillLodgeElement(x);
   pasteNewData(x);
-  lodgeElement = lodgeTemplate.cloneNode(true);
   dialogContainer.style.display = 'block';
 };
 
 // Описываем алгоритм 'click' по пину
-var onPinClick = function (elem, x) {
+var addClickHandler = function (elem, x) {
   elem.addEventListener('click', function () {
     updateActivePin(x);
     openDialogPanel(x);
@@ -261,7 +268,7 @@ var onPinClick = function (elem, x) {
 };
 
 // Описываем алгоритм 'keydown' ENTER по сфокусированному пину
-var onPinEnterKeyDown = function (elem, x) {
+var addEnterHandler = function (elem, x) {
   elem.addEventListener('keydown', function (evt) {
     if (evt.keyCode === 13) {
       updateActivePin(x);
@@ -272,15 +279,29 @@ var onPinEnterKeyDown = function (elem, x) {
 
 // Выполняем функции клика и нажатия на ENTER для всех pin[0...7]
 for (i = 0; i < pin.length; i++) {
-  onPinClick(pin[i], i);
-  onPinEnterKeyDown(pin[i], i);
+  // Этот вариант не будет работать, потому что i всегда будет равно pin.length.
+  // И из-за этого обработчик вешается на несуществующий элемент.
+  // pin[i].addEventListener('click', function () {
+    // updateActivePin(i);
+    // openDialogPanel(i);
+  // });
+  addClickHandler(pin[i], i);
+  addEnterHandler(pin[i], i);
 }
 
-// Задаем механизм закрытия диалогового окна при клике на крестик
+// Задаем механизм закрытия диалогового окна и деактивации
+// подсвеченного пина при клике на крестик
 var dialogCloseButton = document.querySelector('.dialog__close');
 dialogCloseButton.addEventListener('click', function () {
   dialogContainer.style.display = 'none';
-  for (i = 0; i < pin.length; i++) {
-    pin[i].classList.remove('pin--active');
+  deactivateAllPins();
+});
+
+// Задаем механизм закрытия диалогового окна и деактивации
+// подсвеченного пина при нажатии на ESC
+document.addEventListener('keydown', function (evt) {
+  if (evt.keyCode === 27) {
+    dialogContainer.style.display = 'none';
+    deactivateAllPins();
   }
 });
