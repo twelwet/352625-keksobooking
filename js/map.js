@@ -168,6 +168,7 @@ var insertAllPins = function () {
     pin[i].style.left = (ads[i].location.x) + 'px';
     pin[i].style.top = (ads[i].location.y) + 'px';
     pin[i].innerHTML = '<img src=\'' + ads[i].author.avatar + '\' class=\'rounded\' width=\'40\' height=\'40\'>';
+    pin[i].tabIndex = 0;
     fragment.appendChild(pin[i]);
   }
   pinMapElement.appendChild(fragment);
@@ -179,46 +180,128 @@ insertAllPins();
 var lodgeTemplate = document.getElementById('lodge-template').content;
 
 // Объявляем переменную, в которую клонируем шаблон объявления
-var lodgeElement = lodgeTemplate.cloneNode(true);
+var lodgeElement;
+
+// Объявляем переменную-контейнер диалогового окна объявления
+var dialogContainer = document.querySelector('.dialog');
+
+// Объявляем переменную, в которой будет находится путь к аватару на объявлении
+var dialogContainerTitleImg = dialogContainer.querySelector('.dialog__title img');
+// var dialogContainerPanel = dialogContainer.querySelector('.dialog__panel');
 
 // Объявляем функцию создания тегов SPAN по количеству особенностей размещения
-var createSpans = function () {
+var createSpans = function (x) {
   var featureSpan = [];
-  for (i = 0; i < ads[0].offer.features.length; i++) {
+  var lodgeElementFeatures = lodgeElement.querySelector('.lodge__features');
+  for (i = 0; i < ads[x].offer.features.length; i++) {
     featureSpan[i] = document.createElement('span');
-    featureSpan[i].className = 'feature__image feature__image--' + ads[0].offer.features[i];
-    lodgeElement.querySelector('.lodge__features').appendChild(featureSpan[i]);
+    featureSpan[i].className = 'feature__image feature__image--' + ads[x].offer.features[i];
+    lodgeElementFeatures.appendChild(featureSpan[i]);
   }
 };
 
 // Задаем функцию заполнения шаблона данными из 1-го элемента массива объявлений
-var fillLodgeElement = function () {
-  lodgeElement.querySelector('.lodge__title').textContent = ads[0].offer.title;
-  lodgeElement.querySelector('.lodge__address').textContent = ads[0].offer.address;
-  lodgeElement.querySelector('.lodge__price').textContent = ads[0].offer.price + 'Р/ночь';
-  switch (ads[0].offer.type) {
+var fillLodgeElement = function (x) {
+  // Объявляем переменные-составляющие блока 'lodgeElement': title, address, price и т.д.
+  var lodgeElementTitle = lodgeElement.querySelector('.lodge__title');
+  var lodgeElementAddress = lodgeElement.querySelector('.lodge__address');
+  var lodgeElementPrice = lodgeElement.querySelector('.lodge__price');
+  var lodgeElementType = lodgeElement.querySelector('.lodge__type');
+  var lodgeElementsRoomsAndGuests = lodgeElement.querySelector('.lodge__rooms-and-guests');
+  var lodgeElementCheckinTime = lodgeElement.querySelector('.lodge__checkin-time');
+  var lodgeElementDescription = lodgeElement.querySelector('.lodge__description');
+  lodgeElementTitle.textContent = ads[x].offer.title;
+  lodgeElementAddress.textContent = ads[x].offer.address;
+  lodgeElementPrice.textContent = ads[x].offer.price + 'Р/ночь';
+  switch (ads[x].offer.type) {
     case 'flat':
-      lodgeElement.querySelector('.lodge__type').textContent = 'Квартира';
+      lodgeElementType.textContent = 'Квартира';
       break;
     case 'bungalo':
-      lodgeElement.querySelector('.lodge__type').textContent = 'Бунгало';
+      lodgeElementType.textContent = 'Бунгало';
       break;
     case 'house':
-      lodgeElement.querySelector('.lodge__type').textContent = 'Дом';
+      lodgeElementType.textContent = 'Дом';
       break;
   }
-  lodgeElement.querySelector('.lodge__rooms-and-guests').textContent = 'Для ' + ads[0].offer.guests + ' гостей в ' + ads[0].offer.rooms + ' комнатах';
-  lodgeElement.querySelector('.lodge__checkin-time').textContent = 'Заезд после ' + ads[0].offer.checkin + ', выезд до ' + ads[0].offer.checkout;
-  createSpans();
-  lodgeElement.querySelector('.lodge__description').textContent = ads[0].offer.description;
+  lodgeElementsRoomsAndGuests.textContent = 'Для ' + ads[x].offer.guests + ' гостей в ' + ads[x].offer.rooms + ' комнатах';
+  lodgeElementCheckinTime.textContent = 'Заезд после ' + ads[x].offer.checkin + ', выезд до ' + ads[x].offer.checkout;
+  createSpans(x);
+  lodgeElementDescription.textContent = ads[x].offer.description;
 };
-
-fillLodgeElement();
 
 // Задаем функцию вставки новых данных на страницу
-var pasteNewData = function () {
-  document.querySelector('.dialog__title img').src = ads[0].author.avatar;
-  document.querySelector('.dialog').replaceChild(lodgeElement, document.querySelector('.dialog__panel'));
+var pasteNewData = function (x) {
+  dialogContainerTitleImg.src = ads[x].author.avatar;
+  dialogContainer.replaceChild(lodgeElement, dialogContainer.querySelector('.dialog__panel'));
 };
 
-pasteNewData();
+// Задаем фнукцию деактивации всех активных пинов
+var deactivateAllPins = function () {
+  for (i = 0; i < pin.length; i++) {
+    pin[i].classList.remove('pin--active');
+  }
+};
+
+// Задаем функцию, которая по клику подсвечивает пин
+var updateActivePin = function (x) {
+  deactivateAllPins();
+  pin[x].classList.add('pin--active');
+};
+
+// Задаем функцию, которая деактивирует подсвеченный
+
+// Задаем функцию открытия диалогового окна объявления
+var openDialogPanel = function (x) {
+  lodgeElement = lodgeTemplate.cloneNode(true);
+  fillLodgeElement(x);
+  pasteNewData(x);
+  dialogContainer.style.display = 'block';
+};
+
+// Описываем алгоритм 'click' по пину
+var addClickHandler = function (elem, x) {
+  elem.addEventListener('click', function () {
+    updateActivePin(x);
+    openDialogPanel(x);
+  });
+};
+
+// Описываем алгоритм 'keydown' ENTER по сфокусированному пину
+var addEnterHandler = function (elem, x) {
+  elem.addEventListener('keydown', function (evt) {
+    if (evt.keyCode === 13) {
+      updateActivePin(x);
+      openDialogPanel(x);
+    }
+  });
+};
+
+// Выполняем функции клика и нажатия на ENTER для всех pin[0...7]
+for (i = 0; i < pin.length; i++) {
+  // Этот вариант не будет работать, потому что i всегда будет равно pin.length.
+  // И из-за этого обработчик вешается на несуществующий элемент.
+  // pin[i].addEventListener('click', function () {
+    // updateActivePin(i);
+    // openDialogPanel(i);
+  // });
+  addClickHandler(pin[i], i);
+  addEnterHandler(pin[i], i);
+}
+
+// Задаем механизм закрытия диалогового окна и деактивации
+// подсвеченного пина при клике на крестик
+var dialogCloseButton = document.querySelector('.dialog__close');
+dialogCloseButton.addEventListener('click', function () {
+  dialogContainer.style.display = 'none';
+  deactivateAllPins();
+});
+
+// Задаем механизм закрытия диалогового окна и деактивации
+// подсвеченного пина при нажатии на ESC
+document.addEventListener('keydown', function (evt) {
+  if (evt.keyCode === 27) {
+    dialogContainer.style.display = 'none';
+    deactivateAllPins();
+  }
+});
