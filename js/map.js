@@ -300,7 +300,7 @@ document.addEventListener('keydown', function (evt) {
   }
 });
 
-// Объявим переменные полей объявления
+// Объявим переменные полей объявления и кнопки
 var title = document.querySelector('#title');
 var type = document.querySelector('#type');
 var price = document.querySelector('#price');
@@ -308,6 +308,7 @@ var time = document.querySelector('#time');
 var timeout = document.querySelector('#timeout');
 var roomNumber = document.querySelector('#room_number');
 var capacity = document.querySelector('#capacity');
+var form = document.querySelector('.notice__form');
 
 // Параметры заголовка объявления
 title.required = true;
@@ -319,6 +320,7 @@ price.required = true;
 price.type = 'number';
 price.min = 1000;
 price.max = 1000000;
+price.value = 1000;
 
 // Объявим функцию автоселекта равнонаполненных полей INPUT
 var autoSelect = function (elem1, elem2) {
@@ -334,16 +336,36 @@ var autoSelect = function (elem1, elem2) {
 autoSelect(time, timeout);
 autoSelect(timeout, time);
 
+// Зададим константу минимальной цены
+var MIN_PRICES = [
+  0,
+  1000,
+  10000
+];
+
 // Задаем механизм типа размещения от цены
 price.addEventListener('input', function () {
-  if (price.value >= 0 && price.value < 1000) {
+  if (price.value >= MIN_PRICES[0] && price.value < MIN_PRICES[1]) {
     type.options[1].selected = true; // 'Лачуга'
   }
-  if (price.value >= 1000 && price.value < 10000) {
+  if (price.value >= MIN_PRICES[1] && price.value < MIN_PRICES[2]) {
     type.options[0].selected = true; // 'Квартира'
   }
-  if (price.value >= 10000) {
+  if (price.value >= MIN_PRICES[2]) {
     type.options[2].selected = true; // 'Дворец'
+  }
+});
+
+// Задаем механизм цены от типа размещения
+type.addEventListener('change', function () {
+  if (type.options[1].selected === true) { // 'Лачуга'
+    price.value = MIN_PRICES[0];
+  }
+  if (type.options[0].selected === true) { // 'Квартира'
+    price.value = MIN_PRICES[1];
+  }
+  if (type.options[2].selected === true) { // 'Дворец'
+    price.value = MIN_PRICES[2];
   }
 });
 
@@ -355,4 +377,32 @@ roomNumber.addEventListener('change', function () {
   if (roomNumber.options[0].selected === true) {
     capacity.options[1].selected = true;
   }
+});
+
+// Сменим значение по умолчания для селекта кол-ва мест чтобы соответсвовать логике ТЗ
+capacity.options[1].selected = true;
+
+// Задаем механизм зависимости кол-ва комнат от кол-ва мест
+capacity.addEventListener('change', function () {
+  if (capacity.options[0].selected === true) {
+    roomNumber.options[1].selected = true;
+  }
+  if (capacity.options[1].selected === true) {
+    roomNumber.options[0].selected = true;
+  }
+});
+
+// Проверим правильность заполнения полей формы title.value и price.value
+form.addEventListener('submit', function () {
+  if (title.value < title.minLength || title.value > title.maxLength) {
+    title.style.borderColor = 'red';
+  } else {
+    title.style.borderColor = '';
+  }
+  if (price.value < price.min || price.value > price.max) {
+    price.style.borderColor = 'red';
+  } else {
+    price.style.borderColor = '';
+  }
+  form.reset();
 });
