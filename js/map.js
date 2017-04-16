@@ -279,12 +279,6 @@ var addEnterHandler = function (elem, x) {
 
 // Выполняем функции клика и нажатия на ENTER для всех pin[0...7]
 for (i = 0; i < pin.length; i++) {
-  // Этот вариант не будет работать, потому что i всегда будет равно pin.length.
-  // И из-за этого обработчик вешается на несуществующий элемент.
-  // pin[i].addEventListener('click', function () {
-    // updateActivePin(i);
-    // openDialogPanel(i);
-  // });
   addClickHandler(pin[i], i);
   addEnterHandler(pin[i], i);
 }
@@ -303,5 +297,62 @@ document.addEventListener('keydown', function (evt) {
   if (evt.keyCode === 27) {
     dialogContainer.style.display = 'none';
     deactivateAllPins();
+  }
+});
+
+// Объявим переменные полей объявления
+var title = document.querySelector('#title');
+var type = document.querySelector('#type');
+var price = document.querySelector('#price');
+var time = document.querySelector('#time');
+var timeout = document.querySelector('#timeout');
+var roomNumber = document.querySelector('#room_number');
+var capacity = document.querySelector('#capacity');
+
+// Параметры заголовка объявления
+title.required = true;
+title.minLength = 30;
+title.maxLength = 100;
+
+// Параметры цены объявления
+price.required = true;
+price.type = 'number';
+price.min = 1000;
+price.max = 1000000;
+
+// Объявим функцию автоселекта равнонаполненных полей INPUT
+var autoSelect = function (elem1, elem2) {
+  elem1.addEventListener('change', function () {
+    for (i = 0; i < elem1.length; i++) {
+      if (elem1.options[i].selected === true) {
+        elem2.options[i].selected = true;
+      }
+    }
+  });
+};
+
+autoSelect(time, timeout);
+autoSelect(timeout, time);
+
+// Задаем механизм типа размещения от цены
+price.addEventListener('input', function () {
+  if (price.value >= 0 && price.value < 1000) {
+    type.options[1].selected = true; // 'Лачуга'
+  }
+  if (price.value >= 1000 && price.value < 10000) {
+    type.options[0].selected = true; // 'Квартира'
+  }
+  if (price.value >= 10000) {
+    type.options[2].selected = true; // 'Дворец'
+  }
+});
+
+// Задаем механизм зависимости кол-ва мест от кол-ва комнат
+roomNumber.addEventListener('change', function () {
+  if (roomNumber.options[1].selected || roomNumber.options[2].selected) {
+    capacity.options[0].selected = true;
+  }
+  if (roomNumber.options[0].selected === true) {
+    capacity.options[1].selected = true;
   }
 });
