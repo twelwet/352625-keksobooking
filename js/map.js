@@ -310,19 +310,6 @@ var timeout = form.querySelector('#timeout');
 var roomNumber = form.querySelector('#room_number');
 var capacity = form.querySelector('#capacity');
 
-
-// Параметры заголовка объявления
-title.required = true;
-title.minLength = 30;
-title.maxLength = 100;
-
-// Параметры цены объявления
-price.required = true;
-price.type = 'number';
-price.min = 1000;
-price.max = 1000000;
-price.value = 1000;
-
 // Объявим функцию автоселекта равнонаполненных полей INPUT
 var autoSelect = function (elem1, elem2) {
   elem1.addEventListener('change', function () {
@@ -380,8 +367,24 @@ roomNumber.addEventListener('change', function () {
   }
 });
 
-// Сменим значение по умолчания для селекта кол-ва мест чтобы соответсвовать логике ТЗ
-capacity.options[1].selected = true;
+// Объявим функцию сброса формы в умолчание
+var setDefaultForm = function () {
+  form.reset();
+  // Параметры заголовка объявления
+  // title.required = true;
+  // title.minLength = 30;
+  // title.maxLength = 100;
+  // Параметры цены объявления
+  // price.required = true;
+  // price.type = 'number';
+  // price.min = 1000;
+  // price.max = 1000000;
+  price.value = 1000;
+  // Сменим значение по умолчания для селекта кол-ва мест чтобы соответсвовать логике ТЗ
+  capacity.options[1].selected = true;
+};
+
+setDefaultForm();
 
 // Задаем механизм зависимости кол-ва комнат от кол-ва мест
 capacity.addEventListener('change', function () {
@@ -393,22 +396,36 @@ capacity.addEventListener('change', function () {
   }
 });
 
+// Объявим функцию валидации формы
+var validateForm = function (textField, numberField) {
+  if (textField.value.length < 30 || textField.value.length > 100) {
+    textField.style.borderColor = 'red';
+    if (numberField.value < 1000 || numberField.value > 1000000) {
+      numberField.style.borderColor = 'red';
+    } else {
+      numberField.style.borderColor = '';
+    }
+    return false;
+  } else {
+    textField.style.borderColor = '';
+    if (numberField.value < 1000 || numberField.value > 1000000) {
+      numberField.style.borderColor = 'red';
+      return false;
+    }
+    textField.style.borderColor = '';
+    numberField.style.borderColor = '';
+    return true;
+  }
+};
+
 // Проверим правильность заполнения полей формы title.value и price.value
 form.addEventListener('submit', function (evt) {
-  if (title.value.length < title.minLength || title.value.length > title.maxLength) {
-    title.style.borderColor = 'red';
-    evt.preventDefault();
-  } else {
-    title.style.borderColor = '';
-  }
-  if (price.value < price.min || price.value > price.max) {
-    price.style.borderColor = 'red';
-    evt.preventDefault();
-  } else {
-    price.style.borderColor = '';
-  }
-  // В случае если сработали оба условия, то сбрасываем значения формы
-  if (title.style.borderColor === '' && price.style.borderColor === '') {
-    form.reset();
+  // Отменяем действие по умолчанию
+  evt.preventDefault();
+  // Проводим валидацию
+  var x = validateForm(title, price);
+  if (x === true) {
+    form.submit();
+    setDefaultForm();
   }
 });
