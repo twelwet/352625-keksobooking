@@ -371,14 +371,14 @@ roomNumber.addEventListener('change', function () {
 var setDefaultForm = function () {
   form.reset();
   // Параметры заголовка объявления
-  // title.required = true;
-  // title.minLength = 30;
-  // title.maxLength = 100;
+  title.required = true;
+  title.minLength = 30;
+  title.maxLength = 100;
   // Параметры цены объявления
-  // price.required = true;
-  // price.type = 'number';
-  // price.min = 1000;
-  // price.max = 1000000;
+  price.required = true;
+  price.type = 'number';
+  price.min = 1000;
+  price.max = 1000000;
   price.value = 1000;
   // Сменим значение по умолчания для селекта кол-ва мест чтобы соответсвовать логике ТЗ
   capacity.options[1].selected = true;
@@ -396,25 +396,34 @@ capacity.addEventListener('change', function () {
   }
 });
 
-// Объявим функцию валидации формы
-var validateForm = function (textField, numberField) {
-  if (textField.value.length < 30 || textField.value.length > 100) {
+// Объявим функцию валидации текстового поля
+var validateTitle = function (textField, textMin, textMax) {
+  if (textField.value.length < textMin || textField.value.length > textMax) {
     textField.style.borderColor = 'red';
-    if (numberField.value < 1000 || numberField.value > 1000000) {
-      numberField.style.borderColor = 'red';
-    } else {
-      numberField.style.borderColor = '';
-    }
     return false;
   } else {
     textField.style.borderColor = '';
-    if (numberField.value < 1000 || numberField.value > 1000000) {
-      numberField.style.borderColor = 'red';
-      return false;
-    }
-    textField.style.borderColor = '';
+    return true;
+  }
+};
+
+// Объявим функцию валидации числового поля
+var validateNumber = function (numberField, numberMin, numberMax) {
+  if (numberField.value < numberMin || numberField.value > numberMax) {
+    numberField.style.borderColor = 'red';
+    return false;
+  } else {
     numberField.style.borderColor = '';
     return true;
+  }
+};
+
+// Объявим функцию валидации формы
+var validateForm = function () {
+  if (validateTitle(title, title.minLength, title.maxLength) * validateNumber(price, price.min, price.max)) {
+    return true;
+  } else {
+    return false;
   }
 };
 
@@ -423,8 +432,7 @@ form.addEventListener('submit', function (evt) {
   // Отменяем действие по умолчанию
   evt.preventDefault();
   // Проводим валидацию
-  var x = validateForm(title, price);
-  if (x === true) {
+  if (validateForm()) {
     form.submit();
     setDefaultForm();
   }
