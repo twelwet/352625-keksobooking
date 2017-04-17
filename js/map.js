@@ -301,14 +301,15 @@ document.addEventListener('keydown', function (evt) {
 });
 
 // Объявим переменные полей объявления и кнопки
-var title = document.querySelector('#title');
-var type = document.querySelector('#type');
-var price = document.querySelector('#price');
-var time = document.querySelector('#time');
-var timeout = document.querySelector('#timeout');
-var roomNumber = document.querySelector('#room_number');
-var capacity = document.querySelector('#capacity');
 var form = document.querySelector('.notice__form');
+var title = form.querySelector('#title');
+var type = form.querySelector('#type');
+var price = form.querySelector('#price');
+var time = form.querySelector('#time');
+var timeout = form.querySelector('#timeout');
+var roomNumber = form.querySelector('#room_number');
+var capacity = form.querySelector('#capacity');
+
 
 // Параметры заголовка объявления
 title.required = true;
@@ -393,16 +394,21 @@ capacity.addEventListener('change', function () {
 });
 
 // Проверим правильность заполнения полей формы title.value и price.value
-form.addEventListener('submit', function () {
-  if (title.value < title.minLength || title.value > title.maxLength) {
+form.addEventListener('submit', function (evt) {
+  if (title.value.length < title.minLength || title.value.length > title.maxLength) {
     title.style.borderColor = 'red';
+    evt.preventDefault();
   } else {
     title.style.borderColor = '';
   }
   if (price.value < price.min || price.value > price.max) {
     price.style.borderColor = 'red';
+    evt.preventDefault();
   } else {
     price.style.borderColor = '';
   }
-  form.reset();
+  // В случае если сработали оба условия, то сбрасываем значения формы
+  if (title.style.borderColor === '' && price.style.borderColor === '') {
+    form.reset();
+  }
 });
