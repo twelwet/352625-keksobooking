@@ -420,7 +420,9 @@ var validateNumber = function (numberField, numberMin, numberMax) {
 
 // Объявим функцию валидации формы
 var validateForm = function () {
-  return validateTitle(title, title.minLength, title.maxLength) && validateNumber(price, price.min, price.max);
+  var titleValid = validateTitle(title, title.minLength, title.maxLength);
+  var numberValid = validateNumber(price, price.min, price.max);
+  return titleValid && numberValid;
 };
 
 // Проверим правильность заполнения полей формы title.value и price.value
