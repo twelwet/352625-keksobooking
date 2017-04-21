@@ -1,6 +1,8 @@
 // data.js
 'use strict';
+
 window.data = (function () {
+
   // Задаем константы
   var TITLES = [
     'Большая уютная квартира',
@@ -122,8 +124,10 @@ window.data = (function () {
     }
     return randomFeatures;
   };
+
   // Создаем массив объявлений
   var ads = [];
+
   // Заполняем массив в цикле
   for (var i = 0; i < ADS_QUANTITY; i++) {
     ads[i] = {
@@ -152,4 +156,5 @@ window.data = (function () {
   return {
     ads: ads
   };
+
 })();

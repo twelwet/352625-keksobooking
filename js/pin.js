@@ -1,6 +1,8 @@
 // pin.js
 'use strict';
+
 window.pin = (function () {
+
   // Подключаем переменные из глобальной области видимости
   var ads = window.data.ads;
 
@@ -39,11 +41,11 @@ window.pin = (function () {
     pin[x].classList.add('pin--active');
   };
 
-
   return {
     pin: pin,
     insertAllPins: insertAllPins,
     updateActivePin: updateActivePin,
     deactivateAllPins: deactivateAllPins
   };
+
 })();

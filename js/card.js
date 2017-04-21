@@ -2,6 +2,7 @@
 'use strict';
 
 window.card = (function () {
+
   // Подключаем переменные из глобальной области видимости
   var ads = window.data.ads;
   // var deactivateAllPins = window.pin.deactivateAllPins;
@@ -74,8 +75,14 @@ window.card = (function () {
     dialogContainer.style.display = 'block';
   };
 
+  // Задаем функцию закрытия диалогового окна объявления
+  var closeDialogPanel = function () {
+    dialogContainer.style.display = 'none';
+  };
+
   return {
     openDialogPanel: openDialogPanel,
-    dialogContainer: dialogContainer
+    closeDialogPanel: closeDialogPanel
   };
+
 })();

@@ -1,6 +1,8 @@
 // form.js
 'use strict';
+
 (function () {
+
   // Объявим переменные полей объявления и кнопки
   var form = document.querySelector('.notice__form');
   var title = form.querySelector('#title');
