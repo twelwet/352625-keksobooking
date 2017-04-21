@@ -2,7 +2,6 @@
 'use strict';
 window.pin = (function () {
   // Подключаем переменные из глобальной области видимости
-  var ADS_QUANTITY = window.data.ADS_QUANTITY;
   var ads = window.data.ads;
 
   // Объявляем переменную, внутри которой будет находится DIV-контейнер будущих меток
@@ -15,7 +14,7 @@ window.pin = (function () {
   var insertAllPins = function () {
     // Объявляем переменную, внутри которой будет находится DOM-объект
     var fragment = document.createDocumentFragment();
-    for (var i = 0; i < ADS_QUANTITY; i++) {
+    for (var i = 0; i < ads.length; i++) {
       pin[i] = document.createElement('div');
       pin[i].className = 'pin';
       pin[i].style.left = (ads[i].location.x) + 'px';
@@ -40,29 +39,11 @@ window.pin = (function () {
     pin[x].classList.add('pin--active');
   };
 
-  // Описываем алгоритм 'click' по пину
-  var addClickHandler = function (elem, x) {
-    elem.addEventListener('click', function () {
-      updateActivePin(x);
-      window.card.openDialogPanel(x);
-    });
-  };
-
-  // Описываем алгоритм 'keydown' ENTER по сфокусированному пину
-  var addEnterHandler = function (elem, x) {
-    elem.addEventListener('keydown', function (evt) {
-      if (evt.keyCode === 13) {
-        updateActivePin(x);
-        window.card.openDialogPanel(x);
-      }
-    });
-  };
 
   return {
     pin: pin,
     insertAllPins: insertAllPins,
-    deactivateAllPins: deactivateAllPins,
-    addClickHandler: addClickHandler,
-    addEnterHandler: addEnterHandler
+    updateActivePin: updateActivePin,
+    deactivateAllPins: deactivateAllPins
   };
 })();

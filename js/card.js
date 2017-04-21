@@ -74,26 +74,8 @@ window.card = (function () {
     dialogContainer.style.display = 'block';
   };
 
-  var closeDialogPanel = function () {
-    // Задаем механизм закрытия диалогового окна и деактивации
-    // подсвеченного пина при клике на крестик
-    var dialogCloseButton = document.querySelector('.dialog__close');
-    dialogCloseButton.addEventListener('click', function () {
-      dialogContainer.style.display = 'none';
-      window.pin.deactivateAllPins();
-    });
-
-    // Задаем механизм закрытия диалогового окна и деактивации
-    // подсвеченного пина при нажатии на ESC
-    document.addEventListener('keydown', function (evt) {
-      if (evt.keyCode === 27) {
-        dialogContainer.style.display = 'none';
-        window.pin.deactivateAllPins();
-      }
-    });
-  };
   return {
     openDialogPanel: openDialogPanel,
-    closeDialogPanel: closeDialogPanel
+    dialogContainer: dialogContainer
   };
 })();

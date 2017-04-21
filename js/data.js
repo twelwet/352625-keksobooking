@@ -150,7 +150,6 @@ window.data = (function () {
     };
   }
   return {
-    ADS_QUANTITY: ADS_QUANTITY,
     ads: ads
   };
 })();
