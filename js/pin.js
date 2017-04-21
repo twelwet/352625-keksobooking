@@ -4,7 +4,6 @@ window.pin = (function () {
   // Подключаем переменные из глобальной области видимости
   var ADS_QUANTITY = window.data.ADS_QUANTITY;
   var ads = window.data.ads;
-  var openDialogPanel = window.data.openDialogPanel;
 
   // Объявляем переменную, внутри которой будет находится DIV-контейнер будущих меток
   var pinContainer = document.querySelector('.tokyo__pin-map');
@@ -28,9 +27,6 @@ window.pin = (function () {
     pinContainer.appendChild(fragment);
   };
 
-  // Отрисовываем все пины на карту
-  insertAllPins();
-
   // Задаем функцию деактивации всех активных пинов
   var deactivateAllPins = function () {
     for (var i = 0; i < pin.length; i++) {
@@ -48,7 +44,7 @@ window.pin = (function () {
   var addClickHandler = function (elem, x) {
     elem.addEventListener('click', function () {
       updateActivePin(x);
-      openDialogPanel(x);
+      window.card.openDialogPanel(x);
     });
   };
 
@@ -57,14 +53,16 @@ window.pin = (function () {
     elem.addEventListener('keydown', function (evt) {
       if (evt.keyCode === 13) {
         updateActivePin(x);
-        openDialogPanel(x);
+        window.card.openDialogPanel(x);
       }
     });
   };
 
-  // Выполняем функции клика и нажатия на ENTER для всех pin[0...7]
-  for (var i = 0; i < pin.length; i++) {
-    addClickHandler(pin[i], i);
-    addEnterHandler(pin[i], i);
-  }
+  return {
+    pin: pin,
+    insertAllPins: insertAllPins,
+    deactivateAllPins: deactivateAllPins,
+    addClickHandler: addClickHandler,
+    addEnterHandler: addEnterHandler
+  };
 })();

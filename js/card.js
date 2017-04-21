@@ -4,7 +4,7 @@
 window.card = (function () {
   // Подключаем переменные из глобальной области видимости
   var ads = window.data.ads;
-  var deactivateAllPins = window.pin.deactivateAllPins;
+  // var deactivateAllPins = window.pin.deactivateAllPins;
 
   // Объявляем переменную, внутри которой находится TEMPLATE объявления
   var lodgeTemplate = document.getElementById('lodge-template').content;
@@ -66,8 +66,6 @@ window.card = (function () {
     dialogContainer.replaceChild(lodgeElement, dialogContainer.querySelector('.dialog__panel'));
   };
 
-  // Задаем функцию, которая деактивирует подсвеченный
-
   // Задаем функцию открытия диалогового окна объявления
   var openDialogPanel = function (x) {
     lodgeElement = lodgeTemplate.cloneNode(true);
@@ -76,23 +74,26 @@ window.card = (function () {
     dialogContainer.style.display = 'block';
   };
 
-  // Задаем механизм закрытия диалогового окна и деактивации
-  // подсвеченного пина при клике на крестик
-  var dialogCloseButton = document.querySelector('.dialog__close');
-  dialogCloseButton.addEventListener('click', function () {
-    dialogContainer.style.display = 'none';
-    deactivateAllPins();
-  });
-
-  // Задаем механизм закрытия диалогового окна и деактивации
-  // подсвеченного пина при нажатии на ESC
-  document.addEventListener('keydown', function (evt) {
-    if (evt.keyCode === 27) {
+  var closeDialogPanel = function () {
+    // Задаем механизм закрытия диалогового окна и деактивации
+    // подсвеченного пина при клике на крестик
+    var dialogCloseButton = document.querySelector('.dialog__close');
+    dialogCloseButton.addEventListener('click', function () {
       dialogContainer.style.display = 'none';
-      deactivateAllPins();
-    }
-  });
+      window.pin.deactivateAllPins();
+    });
+
+    // Задаем механизм закрытия диалогового окна и деактивации
+    // подсвеченного пина при нажатии на ESC
+    document.addEventListener('keydown', function (evt) {
+      if (evt.keyCode === 27) {
+        dialogContainer.style.display = 'none';
+        window.pin.deactivateAllPins();
+      }
+    });
+  };
   return {
-    openDialogPanel: openDialogPanel
+    openDialogPanel: openDialogPanel,
+    closeDialogPanel: closeDialogPanel
   };
 })();
