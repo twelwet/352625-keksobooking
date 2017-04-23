@@ -1,7 +1,7 @@
 // map.js
 'use strict';
 
-(function () {
+window.map = (function () {
 
   // Отрисовываем все пины
   window.pin.insertAllPins();
@@ -49,8 +49,33 @@
   });
 
   // Найдем перетаскиваемый элемент '.pin__main'
-  // Делаю как в демке, только у меня 'за что тащим' и 'что перетакскиваем' совпадает
   var pinHandle = document.querySelector('.pin__main');
+
+  // Зададим область окна перетаскивания следующими константами
+  var MIN_X = 0;
+  var MAX_X = 1130;
+  var MIN_Y = 100;
+  var MAX_Y = 566;
+
+  // Объявим функцию проверки координат заданной области
+  var arePinInArea = function () {
+    if (pinHandle.offsetTop < MIN_Y || pinHandle.offsetTop > MAX_Y || pinHandle.offsetLeft < MIN_X || pinHandle.offsetLeft > MAX_X) {
+      return false;
+    } else {
+      return true;
+    }
+  };
+
+  // Объявим функцию заполнения строки адреса координатами
+  var fillAddress = function () {
+    var pinHandleCoords = {
+      x: (pinHandle.offsetLeft + pinHandle.offsetWidth / 2),
+      y: (pinHandle.offsetTop + pinHandle.offsetHeight)
+    };
+    window.form.address.value = 'x: ' + pinHandleCoords.x + ', y: ' + pinHandleCoords.y + ', offsetTop: ' + pinHandle.offsetTop + ', offsetLeft: ' + pinHandle.offsetLeft;
+  };
+
+  fillAddress();
 
   pinHandle.addEventListener('mousedown', function (evt) {
     evt.preventDefault();
@@ -62,6 +87,8 @@
     var onMouseMove = function (moveEvt) {
       moveEvt.preventDefault();
 
+      fillAddress();
+
       var shift = {
         x: startCoords.x - moveEvt.clientX,
         y: startCoords.y - moveEvt.clientY
@@ -72,8 +99,11 @@
         y: moveEvt.clientY
       };
 
-      pinHandle.style.top = (pinHandle.offsetTop - shift.y) + 'px';
-      pinHandle.style.left = (pinHandle.offsetLeft - shift.x) + 'px';
+      // [ВОПРОС] Подскажи как корректно обозначить область перетаскивания?
+      if (arePinInArea()) {
+        pinHandle.style.top = (pinHandle.offsetTop - shift.y) + 'px';
+        pinHandle.style.left = (pinHandle.offsetLeft - shift.x) + 'px';
+      }
     };
 
     var onMouseUp = function (upEvt) {
@@ -81,15 +111,9 @@
 
       document.removeEventListener('mousemove', onMouseMove);
       document.removeEventListener('mouseup', onMouseUp);
-      // [ВОПРОС] Даже просто при клике на разные места '.pin__main'
-      // в консоль выводятся чуть разные координаты, как сделать так,
-      // чтобы туда выводились координаты острого конца пина?
-      console.log (startCoords);
-
     };
 
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
-
   });
 })();
