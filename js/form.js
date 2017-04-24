@@ -1,7 +1,7 @@
 // form.js
 'use strict';
 
-(function () {
+window.form = (function () {
 
   // Объявим переменные полей объявления и кнопки
   var form = document.querySelector('.notice__form');
@@ -12,6 +12,7 @@
   var timeout = form.querySelector('#timeout');
   var roomNumber = form.querySelector('#room_number');
   var capacity = form.querySelector('#capacity');
+  var address = form.querySelector('#address');
 
   // Объявим функцию автоселекта равнонаполненных полей INPUT
   var autoSelect = function (elem1, elem2) {
@@ -85,6 +86,7 @@
     price.value = 1000;
     // Сменим значение по умолчания для селекта кол-ва мест чтобы соответсвовать логике ТЗ
     capacity.options[1].selected = true;
+    address.readOnly = true;
   };
 
   setDefaultForm();
@@ -138,5 +140,7 @@
       setDefaultForm();
     }
   });
-
+  return {
+    address: address
+  };
 })();
