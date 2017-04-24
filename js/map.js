@@ -1,7 +1,7 @@
 // map.js
 'use strict';
 
-window.map = (function () {
+(function () {
 
   // Отрисовываем все пины
   window.pin.insertAllPins();
@@ -51,28 +51,13 @@ window.map = (function () {
   // Найдем перетаскиваемый элемент '.pin__main'
   var pinHandle = document.querySelector('.pin__main');
 
-  // Зададим область окна перетаскивания следующими константами
-  var MIN_X = 0;
-  var MAX_X = 1130;
-  var MIN_Y = 100;
-  var MAX_Y = 566;
-
-  // Объявим функцию проверки координат заданной области
-  var arePinInArea = function () {
-    if (pinHandle.offsetTop < MIN_Y || pinHandle.offsetTop > MAX_Y || pinHandle.offsetLeft < MIN_X || pinHandle.offsetLeft > MAX_X) {
-      return false;
-    } else {
-      return true;
-    }
-  };
-
   // Объявим функцию заполнения строки адреса координатами
   var fillAddress = function () {
     var pinHandleCoords = {
       x: (pinHandle.offsetLeft + pinHandle.offsetWidth / 2),
       y: (pinHandle.offsetTop + pinHandle.offsetHeight)
     };
-    window.form.address.value = 'x: ' + pinHandleCoords.x + ', y: ' + pinHandleCoords.y + ', offsetTop: ' + pinHandle.offsetTop + ', offsetLeft: ' + pinHandle.offsetLeft;
+    window.form.address.value = 'x: ' + pinHandleCoords.x + ', y: ' + pinHandleCoords.y;
   };
 
   fillAddress();
@@ -99,11 +84,8 @@ window.map = (function () {
         y: moveEvt.clientY
       };
 
-      // [ВОПРОС] Подскажи как корректно обозначить область перетаскивания?
-      if (arePinInArea()) {
-        pinHandle.style.top = (pinHandle.offsetTop - shift.y) + 'px';
-        pinHandle.style.left = (pinHandle.offsetLeft - shift.x) + 'px';
-      }
+      pinHandle.style.top = (pinHandle.offsetTop - shift.y) + 'px';
+      pinHandle.style.left = (pinHandle.offsetLeft - shift.x) + 'px';
     };
 
     var onMouseUp = function (upEvt) {
