@@ -86,6 +86,7 @@ window.form = (function () {
     price.value = 1000;
     // Сменим значение по умолчания для селекта кол-ва мест чтобы соответсвовать логике ТЗ
     capacity.options[1].selected = true;
+    address.readOnly = true;
   };
 
   setDefaultForm();
