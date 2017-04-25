@@ -74,8 +74,6 @@ window.showCard = (function () {
     dialogContainer.style.display = 'block';
   };
 
-  return {
-    showCard: showCard
-  };
+  return showCard;
 
 })();
