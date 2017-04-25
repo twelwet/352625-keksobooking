@@ -19,18 +19,19 @@ window.showCard = (function () {
   var dialogContainerTitleImg = dialogContainer.querySelector('.dialog__title img');
 
   // Объявляем функцию создания тегов SPAN по количеству особенностей размещения
-  var createSpans = function (x) {
+  var createSpans = function (array, index) {
+
     var featureSpan = [];
     var lodgeElementFeatures = lodgeElement.querySelector('.lodge__features');
-    for (var i = 0; i < ads[x].offer.features.length; i++) {
+    for (var i = 0; i < array[index].offer.features.length; i++) {
       featureSpan[i] = document.createElement('span');
-      featureSpan[i].className = 'feature__image feature__image--' + ads[x].offer.features[i];
+      featureSpan[i].className = 'feature__image feature__image--' + array[index].offer.features[i];
       lodgeElementFeatures.appendChild(featureSpan[i]);
     }
   };
 
   // Задаем функцию заполнения шаблона данными из 1-го элемента массива объявлений
-  var fillLodgeElement = function (x) {
+  var fillLodgeElement = function (array, index) {
     // Объявляем переменные-составляющие блока 'lodgeElement': title, address, price и т.д.
     var lodgeElementTitle = lodgeElement.querySelector('.lodge__title');
     var lodgeElementAddress = lodgeElement.querySelector('.lodge__address');
@@ -39,10 +40,10 @@ window.showCard = (function () {
     var lodgeElementsRoomsAndGuests = lodgeElement.querySelector('.lodge__rooms-and-guests');
     var lodgeElementCheckinTime = lodgeElement.querySelector('.lodge__checkin-time');
     var lodgeElementDescription = lodgeElement.querySelector('.lodge__description');
-    lodgeElementTitle.textContent = ads[x].offer.title;
-    lodgeElementAddress.textContent = ads[x].offer.address;
-    lodgeElementPrice.textContent = ads[x].offer.price + 'Р/ночь';
-    switch (ads[x].offer.type) {
+    lodgeElementTitle.textContent = array[index].offer.title;
+    lodgeElementAddress.textContent = array[index].offer.address;
+    lodgeElementPrice.textContent = array[index].offer.price + 'Р/ночь';
+    switch (array[index].offer.type) {
       case 'flat':
         lodgeElementType.textContent = 'Квартира';
         break;
@@ -53,34 +54,28 @@ window.showCard = (function () {
         lodgeElementType.textContent = 'Дом';
         break;
     }
-    lodgeElementsRoomsAndGuests.textContent = 'Для ' + ads[x].offer.guests + ' гостей в ' + ads[x].offer.rooms + ' комнатах';
-    lodgeElementCheckinTime.textContent = 'Заезд после ' + ads[x].offer.checkin + ', выезд до ' + ads[x].offer.checkout;
-    createSpans(x);
-    lodgeElementDescription.textContent = ads[x].offer.description;
+    lodgeElementsRoomsAndGuests.textContent = 'Для ' + array[index].offer.guests + ' гостей в ' + array[index].offer.rooms + ' комнатах';
+    lodgeElementCheckinTime.textContent = 'Заезд после ' + array[index].offer.checkin + ', выезд до ' + array[index].offer.checkout;
+    createSpans(ads, index);
+    lodgeElementDescription.textContent = array[index].offer.description;
   };
 
   // Задаем функцию вставки новых данных на страницу
-  var pasteNewData = function (x) {
-    dialogContainerTitleImg.src = ads[x].author.avatar;
+  var pasteNewData = function (array, index) {
+    dialogContainerTitleImg.src = array[index].author.avatar;
     dialogContainer.replaceChild(lodgeElement, dialogContainer.querySelector('.dialog__panel'));
   };
 
   // Задаем функцию открытия диалогового окна объявления
-  var showCard = function (x) {
+  var showCard = function (array, index) {
     lodgeElement = lodgeTemplate.cloneNode(true);
-    fillLodgeElement(x);
-    pasteNewData(x);
+    fillLodgeElement(ads, index);
+    pasteNewData(ads, index);
     dialogContainer.style.display = 'block';
   };
 
-  // Задаем функцию закрытия диалогового окна объявления
-  var hideCard = function () {
-    dialogContainer.style.display = 'none';
-  };
-
   return {
-    showCard: showCard,
-    hideCard: hideCard
+    showCard: showCard
   };
 
-})();
+});
