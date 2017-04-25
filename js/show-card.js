@@ -78,4 +78,4 @@ window.showCard = (function () {
     showCard: showCard
   };
 
-});
+})();

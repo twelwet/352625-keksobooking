@@ -16,7 +16,7 @@
   var addClickHandler = function (elem, index) {
     elem.addEventListener('click', function () {
       window.pin.updateActivePin(index);
-      window.showCard(ads, index);
+      window.showCard.showCard(ads, index);
     });
   };
 
@@ -25,7 +25,7 @@
     elem.addEventListener('keydown', function (evt) {
       if (evt.keyCode === 13) {
         window.pin.updateActivePin(index);
-        window.showCard(ads, index);
+        window.showCard.showCard(ads, index);
       }
     });
   };
