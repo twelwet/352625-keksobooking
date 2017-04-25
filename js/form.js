@@ -141,6 +141,6 @@ window.form = (function () {
     }
   });
   return {
-    address: address
+    address: address,
   };
 })();

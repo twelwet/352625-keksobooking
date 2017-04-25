@@ -10,7 +10,7 @@
   var addClickHandler = function (elem, x) {
     elem.addEventListener('click', function () {
       window.pin.updateActivePin(x);
-      window.card.openDialogPanel(x);
+      window.showCard.showCard(x);
     });
   };
 
@@ -19,7 +19,7 @@
     elem.addEventListener('keydown', function (evt) {
       if (evt.keyCode === 13) {
         window.pin.updateActivePin(x);
-        window.card.openDialogPanel(x);
+        window.showCard.showCard(x);
       }
     });
   };
@@ -35,7 +35,7 @@
   // подсвеченного пина при клике на крестик
   var dialogCloseButton = document.querySelector('.dialog__close');
   dialogCloseButton.addEventListener('click', function () {
-    window.card.closeDialogPanel();
+    window.showCard.hideCard();
     window.pin.deactivateAllPins();
   });
 
@@ -43,7 +43,7 @@
   // подсвеченного пина при нажатии на ESC
   document.addEventListener('keydown', function (evt) {
     if (evt.keyCode === 27) {
-      window.card.closeDialogPanel();
+      window.showCard.hideCard();
       window.pin.deactivateAllPins();
     }
   });
