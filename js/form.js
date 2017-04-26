@@ -13,7 +13,7 @@ window.form = (function () {
   var roomNumber = form.querySelector('#room_number');
   var capacity = form.querySelector('#capacity');
   var address = form.querySelector('#address');
-
+/*
   // Объявим функцию автоселекта равнонаполненных полей INPUT
   var autoSelect = function (elem1, elem2) {
     elem1.addEventListener('change', function () {
@@ -27,6 +27,9 @@ window.form = (function () {
 
   autoSelect(time, timeout);
   autoSelect(timeout, time);
+*/
+
+  window.synchronizeFields(time, timeout);
 
   // Зададим константу минимальной цены
   var MIN_PRICES = [
@@ -141,6 +144,6 @@ window.form = (function () {
     }
   });
   return {
-    address: address,
+    address: address
   };
 })();
