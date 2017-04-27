@@ -13,30 +13,17 @@ window.form = (function () {
   var roomNumber = form.querySelector('#room_number');
   var capacity = form.querySelector('#capacity');
   var address = form.querySelector('#address');
-/*
-  // Объявим функцию автоселекта равнонаполненных полей INPUT
-  var autoSelect = function (elem1, elem2) {
-    elem1.addEventListener('change', function () {
-      for (var i = 0; i < elem1.length; i++) {
-        if (elem1.options[i].selected === true) {
-          elem2.options[i].selected = true;
-        }
-      }
-    });
-  };
 
-  autoSelect(time, timeout);
-  autoSelect(timeout, time);
-*/
+  var syncValues;
 
-  window.synchronizeFields(time, timeout);
+  // Зададим константы времени заезда и выезда
+  var TIMES = [12, 13, 14];
+  var TIMEOUTS = [12, 13, 14];
 
   // Зададим константу минимальной цены
-  var MIN_PRICES = [
-    0,
-    1000,
-    10000
-  ];
+  var MIN_PRICES = [0, 1000, 10000];
+
+  window.synchronizeFields(time, timeout, TIMES, TIMEOUTS, syncValues);
 
   // Задаем механизм типа размещения от цены
   price.addEventListener('input', function () {
@@ -143,7 +130,10 @@ window.form = (function () {
       setDefaultForm();
     }
   });
+
   return {
-    address: address
+    address: address,
+    syncValues: syncValues,
+    syncValueWithMin: syncValueWithMin
   };
 })();

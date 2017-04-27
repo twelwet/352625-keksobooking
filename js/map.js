@@ -5,7 +5,6 @@
 
   // Отрисовываем все пины
   window.pin.insertAllPins();
-  var ads = window.data.ads;
 
   // Задаем функцию закрытия диалогового окна объявления
   var hideCard = function () {
@@ -16,7 +15,7 @@
   var addClickHandler = function (elem, index) {
     elem.addEventListener('click', function () {
       window.pin.updateActivePin(index);
-      window.showCard(ads[index]);
+      window.showCard(window.data.ads[index]);
     });
   };
 
@@ -25,7 +24,7 @@
     elem.addEventListener('keydown', function (evt) {
       if (evt.keyCode === 13) {
         window.pin.updateActivePin(index);
-        window.showCard(ads[index]);
+        window.showCard(window.data.ads[index]);
       }
     });
   };
