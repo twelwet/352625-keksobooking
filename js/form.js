@@ -14,52 +14,14 @@ window.form = (function () {
   var capacity = form.querySelector('#capacity');
   var address = form.querySelector('#address');
 
-  var syncValues;
+  var syncValues = function (element, value) {
+    element.value = value;
+  };
 
-  // Зададим константы времени заезда и выезда
-  var TIMES = [12, 13, 14];
-  var TIMEOUTS = [12, 13, 14];
-
-  // Зададим константу минимальной цены
-  var MIN_PRICES = [0, 1000, 10000];
-
-  window.synchronizeFields(time, timeout, TIMES, TIMEOUTS, syncValues);
-
-  // Задаем механизм типа размещения от цены
-  price.addEventListener('input', function () {
-    if (price.value >= MIN_PRICES[0] && price.value < MIN_PRICES[1]) {
-      type.options[1].selected = true; // 'Лачуга'
-    }
-    if (price.value >= MIN_PRICES[1] && price.value < MIN_PRICES[2]) {
-      type.options[0].selected = true; // 'Квартира'
-    }
-    if (price.value >= MIN_PRICES[2]) {
-      type.options[2].selected = true; // 'Дворец'
-    }
-  });
-
-  // Задаем механизм цены от типа размещения
-  type.addEventListener('change', function () {
-    if (type.options[1].selected === true) { // 'Лачуга'
-      price.value = MIN_PRICES[0];
-    }
-    if (type.options[0].selected === true) { // 'Квартира'
-      price.value = MIN_PRICES[1];
-    }
-    if (type.options[2].selected === true) { // 'Дворец'
-      price.value = MIN_PRICES[2];
-    }
-  });
-
-  // Задаем механизм зависимости кол-ва мест от кол-ва комнат
-  roomNumber.addEventListener('change', function () {
-    if (roomNumber.options[1].selected || roomNumber.options[2].selected) {
-      capacity.options[0].selected = true;
-    }
-    if (roomNumber.options[0].selected === true) {
-      capacity.options[1].selected = true;
-    }
-  });
+  window.synchronizeFields(time, timeout, [12, 13, 14], [12, 13, 14], syncValues);
+  window.synchronizeFields(timeout, time, [12, 13, 14], [12, 13, 14], syncValues);
+  window.synchronizeFields(type, price, ['apartment', 'shack', 'palace'], [1000, 0, 10000], syncValues);
+  window.synchronizeFields(roomNumber, capacity, [1, 2, 100], ['не для гостей', 'для 3 гостей', 'для 3 гостей'], syncValues);
 
   // Объявим функцию сброса формы в умолчание
   var setDefaultForm = function () {
@@ -80,16 +42,6 @@ window.form = (function () {
   };
 
   setDefaultForm();
-
-  // Задаем механизм зависимости кол-ва комнат от кол-ва мест
-  capacity.addEventListener('change', function () {
-    if (capacity.options[0].selected === true) {
-      roomNumber.options[1].selected = true;
-    }
-    if (capacity.options[1].selected === true) {
-      roomNumber.options[0].selected = true;
-    }
-  });
 
   // Объявим функцию валидации текстового поля
   var validateTitle = function (textField, textMin, textMax) {
@@ -132,8 +84,6 @@ window.form = (function () {
   });
 
   return {
-    address: address,
-    syncValues: syncValues,
-    syncValueWithMin: syncValueWithMin
+    address: address
   };
 })();

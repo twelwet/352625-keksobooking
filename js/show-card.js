@@ -3,9 +3,6 @@
 
 window.showCard = (function () {
 
-  // Подключаем переменные из глобальной области видимости
-  var ads = window.data.ads;
-
   // Объявляем переменную, внутри которой находится TEMPLATE объявления
   var lodgeTemplate = document.getElementById('lodge-template').content;
 
