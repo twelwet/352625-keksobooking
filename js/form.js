@@ -18,9 +18,13 @@ window.form = (function () {
     element.value = value;
   };
 
+  var syncValueWithMin = function (element, value) {
+    element.min = value;
+  };
+
   window.synchronizeFields(time, timeout, [12, 13, 14], [12, 13, 14], syncValues);
   window.synchronizeFields(timeout, time, [12, 13, 14], [12, 13, 14], syncValues);
-  window.synchronizeFields(type, price, ['apartment', 'shack', 'palace'], [1000, 0, 10000], syncValues);
+  window.synchronizeFields(type, price, ['apartment', 'shack', 'palace'], [1000, 0, 10000], syncValueWithMin);
   window.synchronizeFields(roomNumber, capacity, [1, 2, 100], ['не для гостей', 'для 3 гостей', 'для 3 гостей'], syncValues);
 
   // Объявим функцию сброса формы в умолчание
