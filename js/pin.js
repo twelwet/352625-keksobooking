@@ -4,7 +4,8 @@
 window.pin = (function () {
 
   // Подключаем переменные из глобальной области видимости
-  var ads = window.data.ads;
+  // var ads = window.data.ads;
+  var ads = window.load.ads;
 
   // Объявляем переменную, внутри которой будет находится DIV-контейнер будущих меток
   var pinContainer = document.querySelector('.tokyo__pin-map');

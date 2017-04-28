@@ -153,6 +153,7 @@ window.data = (function () {
       }
     };
   }
+
   return {
     ads: ads
   };
