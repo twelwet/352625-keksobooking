@@ -3,8 +3,18 @@
 
 (function () {
 
+  var URL = 'https://intensive-javascript-server-kjgvxfepjl.now.sh/keksobooking/data';
+
+  var onLoad = function (data) {
+    // В консоль все данные выводятся корректно
+    console.log(data);
+    // [ВОПРОС] Почему же эта строчка ничего не выводит?
+    // return data;
+  };
+
   // Отрисовываем все пины
-  window.pin.insertAllPins();
+  // window.pin.insertAllPins(window.data.ads);
+  window.pin.insertAllPins(window.load(URL, onLoad));
 
   // Задаем функцию закрытия диалогового окна объявления
   var hideCard = function () {

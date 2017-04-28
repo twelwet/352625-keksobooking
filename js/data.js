@@ -155,7 +155,8 @@ window.data = (function () {
   }
 
   return {
-    ads: ads
+    ads: ads,
+    URL: URL
   };
 
 })();
