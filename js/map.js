@@ -6,20 +6,25 @@
   // Отрисовываем все пины
   window.pin.insertAllPins();
 
+  // Задаем функцию закрытия диалогового окна объявления
+  var hideCard = function () {
+    document.querySelector('.dialog').style.display = 'none';
+  };
+
   // Описываем алгоритм 'click' по пину
-  var addClickHandler = function (elem, x) {
+  var addClickHandler = function (elem, index) {
     elem.addEventListener('click', function () {
-      window.pin.updateActivePin(x);
-      window.card.openDialogPanel(x);
+      window.pin.updateActivePin(index);
+      window.showCard(window.data.ads[index]);
     });
   };
 
   // Описываем алгоритм 'keydown' ENTER по сфокусированному пину
-  var addEnterHandler = function (elem, x) {
+  var addEnterHandler = function (elem, index) {
     elem.addEventListener('keydown', function (evt) {
       if (evt.keyCode === 13) {
-        window.pin.updateActivePin(x);
-        window.card.openDialogPanel(x);
+        window.pin.updateActivePin(index);
+        window.showCard(window.data.ads[index]);
       }
     });
   };
@@ -35,7 +40,7 @@
   // подсвеченного пина при клике на крестик
   var dialogCloseButton = document.querySelector('.dialog__close');
   dialogCloseButton.addEventListener('click', function () {
-    window.card.closeDialogPanel();
+    hideCard();
     window.pin.deactivateAllPins();
   });
 
@@ -43,7 +48,7 @@
   // подсвеченного пина при нажатии на ESC
   document.addEventListener('keydown', function (evt) {
     if (evt.keyCode === 27) {
-      window.card.closeDialogPanel();
+      hideCard();
       window.pin.deactivateAllPins();
     }
   });
