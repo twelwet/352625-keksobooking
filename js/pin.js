@@ -13,15 +13,15 @@ window.pin = (function () {
   var pin = [];
 
   // Объявляем функцию, которая в цикле вставляет в DIV-контейнер все метки
-  var insertAllPins = function (ad) {
+  var insertAllPins = function (ads) {
     // Объявляем переменную, внутри которой будет находится DOM-объект
     var fragment = document.createDocumentFragment();
-    for (var i = 0; i < ad.length; i++) {
+    for (var i = 0; i < ads.length; i++) {
       pin[i] = document.createElement('div');
       pin[i].className = 'pin';
-      pin[i].style.left = (ad[i].location.x) + 'px';
-      pin[i].style.top = (ad[i].location.y) + 'px';
-      pin[i].innerHTML = '<img src=\'' + ad[i].author.avatar + '\' class=\'rounded\' width=\'40\' height=\'40\'>';
+      pin[i].style.left = (ads[i].location.x) + 'px';
+      pin[i].style.top = (ads[i].location.y) + 'px';
+      pin[i].innerHTML = '<img src=\'' + ads[i].author.avatar + '\' class=\'rounded\' width=\'40\' height=\'40\'>';
       pin[i].tabIndex = 0;
       fragment.appendChild(pin[i]);
     }
