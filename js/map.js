@@ -7,7 +7,6 @@
 
   var onLoad = function (data) {
     // Отрисовываем все пины
-    // window.pin.insertAllPins(window.data.ads);
     window.pin.insertAllPins(data);
 
     // Задаем функцию закрытия диалогового окна объявления
@@ -112,15 +111,12 @@
 
   var onError = function (message) {
     var node = document.createElement('div');
-    node.style = 'z-index: 100; margin: 0 auto; text-align: center; background-color: red;';
+    node.style = 'margin: 0 auto; text-align: center; background-color: red;';
     node.style.position = 'relative';
-    node.style.left = 0;
-    node.style.right = 0;
     node.style.fontSize = '16px';
     node.style.color = 'white';
     node.textContent = message;
     document.body.insertAdjacentElement('afterbegin', node);
-    // console.error(message);
   };
 
   window.load(URL, onLoad, onError);

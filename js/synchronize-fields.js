@@ -2,7 +2,6 @@
 'use strict';
 
 window.synchronizeFields = function (elem1, elem2, array1, array2, callback) {
-  // Логика синхронизации времени заезда / отъезда
   for (var i = 0; i < elem1.length; i++) {
     elem1.options[i].text = array1[i];
   }
