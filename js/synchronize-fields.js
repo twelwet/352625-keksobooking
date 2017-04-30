@@ -1,8 +1,7 @@
 // synchronize-fields.js
 'use strict';
 
-window.synchronizeFields = function (elem1, elem2, array1, array2, func) {
-  // Логика синхронизации времени заезда / отъезда
+window.synchronizeFields = function (elem1, elem2, array1, array2, callback) {
   for (var i = 0; i < elem1.length; i++) {
     elem1.options[i].text = array1[i];
   }
@@ -12,6 +11,6 @@ window.synchronizeFields = function (elem1, elem2, array1, array2, func) {
         var x = i;
       }
     }
-    func(elem2, array2[x]);
+    callback(elem2, array2[x]);
   });
 };

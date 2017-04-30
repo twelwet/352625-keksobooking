@@ -3,9 +3,6 @@
 
 window.pin = (function () {
 
-  // Подключаем переменные из глобальной области видимости
-  var ads = window.data.ads;
-
   // Объявляем переменную, внутри которой будет находится DIV-контейнер будущих меток
   var pinContainer = document.querySelector('.tokyo__pin-map');
 
@@ -13,7 +10,7 @@ window.pin = (function () {
   var pin = [];
 
   // Объявляем функцию, которая в цикле вставляет в DIV-контейнер все метки
-  var insertAllPins = function () {
+  var insertAllPins = function (ads) {
     // Объявляем переменную, внутри которой будет находится DOM-объект
     var fragment = document.createDocumentFragment();
     for (var i = 0; i < ads.length; i++) {

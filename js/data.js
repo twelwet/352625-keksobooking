@@ -1,6 +1,6 @@
 // data.js
 'use strict';
-
+/*
 window.data = (function () {
 
   // Задаем константы
@@ -153,8 +153,10 @@ window.data = (function () {
       }
     };
   }
+
   return {
     ads: ads
   };
 
 })();
+*/
