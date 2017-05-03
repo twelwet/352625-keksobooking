@@ -3,16 +3,154 @@
 
 (function () {
 
+  var filter = document.querySelector('.tokyo__filters');
+  var typeFilter = filter.querySelector('#housing_type');
+  var typeValue = typeFilter.value;
+  var priceFilter = filter.querySelector('#housing_price');
+  var priceValue = priceFilter.value;
+  var roomFilter = filter.querySelector('#housing_room-number');
+  var roomValue = roomFilter.value;
+  var guestFilter = filter.querySelector('#housing_guests-number');
+  var guestValue = guestFilter.value;
+
   var URL = 'https://intensive-javascript-server-kjgvxfepjl.now.sh/keksobooking/data';
 
+  var pins = [];
+
+  var rank = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+
   var onLoad = function (data) {
-    // Отрисовываем все пины
-    window.pin.insertAllPins(data);
+    // Сохраним загруженные данные в переменную 'pins'
+    pins = data;
+
+    // Объявим функцию показа пина фильтром
+    var showPinByFilter = function (element, index) {
+      element[index].style.display = 'block';
+    };
+
+    // Объявим функцию скрытия пина фильтром
+    var hidePinByFilter = function (element, index, callback) {
+      element[index].style.display = 'none';
+      callback();
+      window.pin.deactivateAllPins();
+    };
+
+    // Объявим функцию набора очков каждым объявлением, объявления с
+    // максимальным количеством очков будут отрисованы на карте
+    var getRank = function (type, price, room, guest) {
+      rank = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+      for (var i = 0; i < window.pin.pin.length; i++) {
+        switch (type) {
+          case 'any':
+            rank[i] += 1;
+            break;
+          case pins[i].offer.type:
+            rank[i] += 1;
+            break;
+          default:
+            rank[i] += 0;
+            break;
+        }
+        switch (price) {
+          case 'low':
+            if (pins[i].offer.price <= 10000) {
+              rank[i] += 1;
+            } else {
+              rank[i] += 0;
+            }
+            break;
+          case 'middle':
+            if (pins[i].offer.price > 10000 && pins[i].offer.price < 50000) {
+              rank[i] += 1;
+            } else {
+              rank[i] += 0;
+            }
+            break;
+          case 'high':
+            if (pins[i].offer.price >= 50000) {
+              rank[i] += 1;
+            } else {
+              rank[i] += 0;
+            }
+            break;
+        }
+        switch (room) {
+          case 'any':
+            rank[i] += 1;
+            break;
+          // [ВОПРОС] Почему это условие не срабатывает никогда, из-за кавычек, типа 2 неравно '2'?
+          case pins[i].offer.rooms:
+            rank[i] += 1;
+            break;
+          default:
+            rank[i] += 0;
+            break;
+        }
+        switch (guest) {
+          case 'any':
+            rank[i] += 1;
+            break;
+          // [ВОПРОС] Это условие тоже недостижимо, а почему понять не могу.
+          case pins[i].offer.guests:
+            rank[i] += 1;
+            break;
+          default:
+            rank[i] += 0;
+            break;
+        }
+      }
+    };
+
+    // Описываем алгоритм изменения фильтра 'типа жилья'
+    typeFilter.addEventListener('change', function () {
+      typeValue = typeFilter.value;
+      getRank(typeValue, priceValue, roomValue, guestValue);
+      updatePins(rank);
+    });
+
+    // Описываем алгоритм изменения фильтра 'цены'
+    priceFilter.addEventListener('change', function () {
+      priceValue = priceFilter.value;
+      getRank(typeValue, priceValue, roomValue, guestValue);
+      updatePins(rank);
+    });
+
+    // Описываем алгоритм изменения фильтра 'комнат'
+    roomFilter.addEventListener('change', function () {
+      roomValue = roomFilter.value;
+      getRank(typeValue, priceValue, roomValue, guestValue);
+      updatePins(rank);
+    });
+
+    guestFilter.addEventListener('change', function () {
+      guestValue = guestFilter.value;
+      getRank(typeValue, priceValue, roomValue, guestValue);
+      updatePins(rank);
+    });
 
     // Задаем функцию закрытия диалогового окна объявления
     var hideCard = function () {
       document.querySelector('.dialog').style.display = 'none';
     };
+
+    // Объявим функцию обновления пинов
+    var updatePins = function (value) {
+      for (var i = 0; i < window.pin.pin.length; i++) {
+        switch (value[i]) {
+          case 4:
+            showPinByFilter(window.pin.pin, i);
+            break;
+          default:
+            hidePinByFilter(window.pin.pin, i, hideCard);
+            break;
+        }
+      }
+    };
+
+    // Отрисовываем все пины
+    window.pin.insertAllPins(pins);
+    getRank(typeValue, priceValue, roomValue, guestValue);
+    updatePins(rank);
 
     // Описываем алгоритм 'click' по пину
     var addClickHandler = function (elem, index) {

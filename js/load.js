@@ -30,7 +30,7 @@ window.load = function (url, callbackSuccess, callbackError) {
   xhr.addEventListener('timeout', function () {
     callbackError('Запрос не успел выполниться за ' + xhr.timeout + ' мс');
   });
-  xhr.timeout = 1000;
+  xhr.timeout = 10000;
   xhr.open('GET', url);
   xhr.send();
 };
