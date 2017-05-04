@@ -17,20 +17,20 @@
 
   var pins = [];
 
-  var rank = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+  var rank = [];
 
   var onLoad = function (data) {
     // Сохраним загруженные данные в переменную 'pins'
     pins = data;
 
     // Объявим функцию показа пина фильтром
-    var showPinByFilter = function (element, index) {
-      element[index].style.display = 'block';
+    var showPinByFilter = function (element) {
+      element.style.display = 'block';
     };
 
     // Объявим функцию скрытия пина фильтром
-    var hidePinByFilter = function (element, index, callback) {
-      element[index].style.display = 'none';
+    var hidePinByFilter = function (element, callback) {
+      element.style.display = 'none';
       callback();
       window.pin.deactivateAllPins();
     };
@@ -38,8 +38,14 @@
     // Объявим функцию набора очков каждым объявлением, объявления с
     // максимальным количеством очков будут отрисованы на карте
     var getRank = function (type, price, room, guest) {
-      rank = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+      if (room !== 'any') {
+        room = Number(room);
+      }
+      if (guest !== 'any') {
+        guest = Number(guest);
+      }
       for (var i = 0; i < window.pin.pin.length; i++) {
+        rank[i] = 0;
         switch (type) {
           case 'any':
             rank[i] += 1;
@@ -78,7 +84,6 @@
           case 'any':
             rank[i] += 1;
             break;
-          // [ВОПРОС] Почему это условие не срабатывает никогда, из-за кавычек, типа 2 неравно '2'?
           case pins[i].offer.rooms:
             rank[i] += 1;
             break;
@@ -90,7 +95,6 @@
           case 'any':
             rank[i] += 1;
             break;
-          // [ВОПРОС] Это условие тоже недостижимо, а почему понять не могу.
           case pins[i].offer.guests:
             rank[i] += 1;
             break;
@@ -138,10 +142,10 @@
       for (var i = 0; i < window.pin.pin.length; i++) {
         switch (value[i]) {
           case 4:
-            showPinByFilter(window.pin.pin, i);
+            showPinByFilter(window.pin.pin[i]);
             break;
           default:
-            hidePinByFilter(window.pin.pin, i, hideCard);
+            hidePinByFilter(window.pin.pin[i], hideCard);
             break;
         }
       }
